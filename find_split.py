@@ -1,13 +1,17 @@
 import numpy as np
 
 def find_split (x,y) :
-    #print("entering ")
-    #print("shape is ", x.shape)
+    print("entering find split")
     total_ig = np.zeros((7,3))
-    #print("len is ", len(x[0]))
+    #print(x)
+    #print(y)
 
-    #if()
-    
+    if len(x) == 2 :
+        attribute = 0
+        value = np.mean(x)
+        cutpoint = 1 
+        return attribute,value,int(cutpoint)
+
     for n in range(7) :
         A=x[:,n]
         #print(A.max())
@@ -15,6 +19,7 @@ def find_split (x,y) :
         order_A=np.argsort(A)
         A=A[order_A]
         label=y[order_A]
+        #print("n is " + str(n))
         #print(A)
         #print(label)
         #print(A.shape)
@@ -37,18 +42,19 @@ def find_split (x,y) :
         total = [(y==1).sum(),(y==2).sum(),(y==3).sum(),(y==4).sum()]
 
         for (i,value) in enumerate(A):
-            #print("hi", i)
-
             if i==(len(A)-1):
                 break
-            #print("my label is ", label[i])
-            if label[i]==1:
+            elif i == 0 :
+                #print("here i")
+                continue
+
+            if label[i-1]==1:
                 current[0]+=1
-            elif label[i]==2:
+            elif label[i-1]==2:
                 current[1]+=1
-            elif label[i]==3:
+            elif label[i-1]==3:
                 current[2]+=1
-            elif label[i]==4:
+            elif label[i-1]==4:
                 current[3]+=1
             else:
                 print("ERROR")
@@ -57,12 +63,10 @@ def find_split (x,y) :
             if value==prev_data:
                 prev_data=value
                 continue
-            else:
-                #print(value," hi ")
-            
+            else:         
                 #print(current,"current")
-                left_total = i+1
-                right_total = len(A)-i-1
+                left_total = i
+                right_total = len(A)-i
 
                 #print(left_total)
                 #print(right_total)
@@ -89,20 +93,22 @@ def find_split (x,y) :
                         entropy_right+=-prob*np.log2(prob)
                 #print(entropy_right,"entro_right")
 
-                rate1=(i+1)/float(len(A))
-                rate2=(len(A)-i-1)/float(len(A))
+                rate1=(i)/float(len(A))
+                rate2=(len(A)-i)/float(len(A))
                 #print(rate1,"rate1")
                 #print(rate2,"rate2")
                 total_prob = np.array(total) / len(y)
                 entropy_ori = 0
+                #calculate the original entropy before splittation
                 for prob in total_prob:
                     if prob == 0:
                         continue
                     else:
                         entropy_ori+=-prob*np.log2(prob)
                 ig=entropy_ori-rate1*entropy_left-rate2*entropy_right
-                #print("ig is ", ig)
+
                 if ig > highest_ig:
+
                     highest_ig = ig
                     cut=(value+cut_prev)/2
                     cutpoint = i
@@ -113,7 +119,7 @@ def find_split (x,y) :
     value = total_ig[attribute,1]
     cutpoint = total_ig[attribute,2]
     #print(total_ig)
-    print('the attribute chosen is ' + str(attribute))
-    print('the cut value is ' + str(value))
-    print('the cut point is ' + str(cutpoint))
+    #print('the attribute chosen is ' + str(attribute))
+    #print('the cut value is ' + str(value))
+    #print('the cut point is ' + str(cutpoint))
     return attribute,value,int(cutpoint)

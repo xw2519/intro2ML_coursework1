@@ -28,8 +28,6 @@ def read_dataset(filepath):
     y = np.loadtxt(filepath,usecols=[7])
     return x, y
 
-
-
 '''
 1: procedure decision tree learning(training dataset, depth)
 2:      if all samples have the same label then
@@ -45,25 +43,24 @@ def read_dataset(filepath):
 '''
 #nested_dict = {}
 def DecisionTree(data,label,depth) :
-    #print("hiya")
     depth=0
-    #node_num=0
     [classes, label_unique] = np.unique(label, return_inverse=True) 
     #print(len(classes))
     #print("classes is", classes)
     #print("shape of data is", data.shape)
     if len(classes) == 1 :
-        # 
-        #print("I am here 1")
+        print("entering here")
+        print("label_unique : " , classes[0])
         return Node(leaf = True), depth
         #return depth,node
     else:
-        #print("I am here 2")
         attribute,value,cut_point = fs.find_split(data,label) 
+        print('the attribute chosen is ' + str(attribute))
+        print('the cut value is ' + str(value))
+        print('the cut point is ' + str(cut_point))
         #nested_dict[node_num]={"attribute":attribute,"value":value,"left":-1,"right":-1,"leaf":False}
         #node_num+=1
         #split current data into left and right
-        #tbc
         order=np.argsort(data[:,attribute])
         data=data[order]
         label=label[order]
@@ -77,16 +74,17 @@ def DecisionTree(data,label,depth) :
         #print(len(r_dataset))
         #print(len(l_label))
         #print(len(r_label))
-        #node <- a new decision tree with root as split value
-        node = Node(attribute = attribute, value = value)
+        node = Node(attribute = attribute, value = value)  #node <- a new decision tree with root as split value
         l_branch, l_depth = DecisionTree(l_dataset,l_label,depth+1)
         r_branch, r_depth = DecisionTree(r_dataset,r_label,depth+1)
         node.left = l_branch
         node.right = r_branch
         return node, max(l_depth,r_depth)
+    
 
 def main() :
     data, label = read_dataset("./wifi_db/clean_dataset.txt")
-    DecisionTree(data,label,depth = 0)
+    node, depth = DecisionTree(data,label,depth = 0)
+    print(node)
 
 main()
