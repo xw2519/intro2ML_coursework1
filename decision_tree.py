@@ -4,16 +4,6 @@ import sys
 import find_split as fs
 np.set_printoptions(threshold=sys.maxsize)
 
-'''
-dict = {
-    attribute :  
-    value : 
-    left :
-    right :  
-    leaf : True
-}
-'''
-
 class Node:
     def __init__(self, attribute = None, value = None, leaf = False):
         self.attribute = attribute #attribute 1-7
@@ -42,8 +32,8 @@ def read_dataset(filepath):
 11: end procedure
 '''
 #nested_dict = {}
+depth=0
 def DecisionTree(data,label,depth) :
-    depth=0
     [classes, label_unique] = np.unique(label, return_inverse=True) 
     #print(len(classes))
     #print("classes is", classes)
@@ -84,7 +74,8 @@ def DecisionTree(data,label,depth) :
 
 def main() :
     data, label = read_dataset("./wifi_db/clean_dataset.txt")
-    node, depth = DecisionTree(data,label,depth = 0)
+    node, depth = DecisionTree(data,label,depth=0)
     print(node)
+    print(depth)
 
 main()
