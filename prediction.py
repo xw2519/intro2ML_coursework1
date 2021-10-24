@@ -3,7 +3,7 @@ import numpy as np
 def predict(dataset,decision_tree):
     '''
     ARGUMENT: 
-    x: dataset with unknow labels
+    x: dataset with unknow labels, shape=[n,7]
     decision_tree: decision tree use to predict the label
     RETURN:
     y: predicted labels
@@ -18,32 +18,28 @@ def predict(dataset,decision_tree):
             
 def predict_1(x,decision_tree):
     '''
-    x is a [1,7] data,basically 1 line
+    x: single data, shape=[1,7]
+
     '''
     # if leaf, return result else keep predicting
     print(x,"x")
-    if x[decision_tree["attribute"]] < decision_tree["value"]:
-        print("smaller")
-        if decision_tree["leaf"] == True:
-            #print("hi")
-            return decision_tree["left"]
-        else:
-            return predict_1(x,decision_tree["left"])
+    if decision_tree["leaf"] == True:
+            #print("leaf!")
+            return decision_tree["class"]
     else:
-        print("bigger")
-        if decision_tree["leaf"] == True:
-            #print("hi")
-            return decision_tree["right"]
+        if x[decision_tree["attribute"]]<=decision_tree["value"]:
+            print(str(x[decision_tree["attribute"]])+"<="+str(decision_tree["value"]))
+            return predict_1(x,decision_tree["left"])
         else:
+            print(str(x[decision_tree["attribute"]])+">"+str(decision_tree["value"]))
             return predict_1(x,decision_tree["right"])
 
-'''
-dataset=np.array([[1,2,3,4,5,6,7],[2,3,4,5,6,7,8]])
-decision_tree={"attribute":0,"value":0,"left":{"attribute":3,"value":4,"left":15,"right":16,"leaf":True},"right":{"attribute":5,"value":8,"left":11,"right":13,"leaf":True},"leaf":False}
 
+dataset=np.array([[1,2,3,4,5,6,7],[2,3,4,5,6,7,8]])
+decision_tree={"attribute":0,"value":0,"left":{"attribute":3,"value":4,"left":{"class":15,"leaf":True},"right":{"class":14,"leaf":True},"leaf":False},"right":{"attribute":5,"value":8,"left":{"class":11,"leaf":True},"right":{"class":12,"leaf":True},"leaf":False},"leaf":False}
 y = predict(dataset,decision_tree)
 print(y)
-'''
+
 
 
 
