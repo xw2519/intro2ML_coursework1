@@ -19,13 +19,14 @@ def calculate_set_entropy(dataset_list):
     
     for dataset in dataset_list:
         # Calculate dataset entropy
-        left_length = len(dataset)
-        total_count += left_length
+        dataset_length = len(dataset)
+        total_count += dataset_length
         unique_values = np.unique(dataset, return_counts=True)[1]
-        entropy = np.sum([-(value/left_length) * np.log2(value/left_length) for value in unique_values])
-        entropy_values.append((entropy, left_length))
+        entropy = np.sum([-(value/dataset_length) * np.log2(value/dataset_length) for value in unique_values])
+        entropy_values.append((entropy, dataset_length))
         
-    return np.sum([(n/(total_count)) * ent for n, ent in iter(entropy_values)])
+    # Calculate and return the average entropy of the entire dataset 
+    return np.sum([(subset_length/(total_count)) * entropy_value for entropy_value, subset_length in iter(entropy_values)])
     
     
 def find_split(dataset: np.ndarray):

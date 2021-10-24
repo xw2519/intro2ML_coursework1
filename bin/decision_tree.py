@@ -15,8 +15,6 @@ class Decision_tree:
         else: 
             self.tree_depth = tree_depth + 1
             self.label, self.value, left_sub_dataset, right_sub_dataset = find_split(dataset)
-            
-            print(self.value)
                         
             self.left_child = Decision_tree(left_sub_dataset, self.tree_depth)
             self.right_child = Decision_tree(right_sub_dataset, self.tree_depth)
