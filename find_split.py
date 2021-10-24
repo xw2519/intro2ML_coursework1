@@ -1,14 +1,14 @@
 import numpy as np
 
 def find_split (x,y) :
-    print("entering find split")
+    #print("entering find split")
     total_ig = np.zeros((7,3))
     #print(x)
     #print(y)
 
     if len(x) == 2 :
         attribute = 0
-        value = np.mean(x)
+        value = np.around(np.mean(x),2)
         cutpoint = 1 
         return attribute,value,int(cutpoint)
 

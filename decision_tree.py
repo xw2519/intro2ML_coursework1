@@ -1,9 +1,21 @@
 import numpy as np 
-import matplotlib as plt
+import plot as plt
 import sys
 import find_split as fs
+
+
 np.set_printoptions(threshold=sys.maxsize)
 
+'''
+dict = {
+    attribute :  
+    value : 
+    left :
+    right :  
+    leaf : True
+}
+'''
+'''
 class Node:
     def __init__(self, attribute = None, value = None, leaf = False):
         self.attribute = attribute #attribute 1-7
@@ -11,7 +23,7 @@ class Node:
         self.left = None 
         self.right = None
         self.leaf = False #whether it is a leaf node or not
-
+'''
 
 def read_dataset(filepath): 
     x = np.loadtxt(filepath,usecols=[0,1,2,3,4,5,6]) 
@@ -33,21 +45,29 @@ def read_dataset(filepath):
 '''
 #nested_dict = {}
 depth=0
+width = [0,0,0,0,0]
 def DecisionTree(data,label,depth) :
     [classes, label_unique] = np.unique(label, return_inverse=True) 
     #print(len(classes))
     #print("classes is", classes)
     #print("shape of data is", data.shape)
     if len(classes) == 1 :
-        print("entering here")
-        print("label_unique : " , classes[0])
-        return Node(leaf = True), depth
-        #return depth,node
+        #print("leaf")
+        #print("label_unique : " , classes[0])
+        leaf_node = {"class" : classes[0], "leaf" : True}
+        
+        if depth >= len(width) :
+            width.append(1)
+        else :
+            width[depth] += 1
+        
+        return leaf_node, depth
+
     else:
         attribute,value,cut_point = fs.find_split(data,label) 
-        print('the attribute chosen is ' + str(attribute))
-        print('the cut value is ' + str(value))
-        print('the cut point is ' + str(cut_point))
+        #print('the attribute chosen is ' + str(attribute))
+        #print('the cut value is ' + str(value))
+        #print('the cut point is ' + str(cut_point))
         #nested_dict[node_num]={"attribute":attribute,"value":value,"left":-1,"right":-1,"leaf":False}
         #node_num+=1
         #split current data into left and right
@@ -64,18 +84,32 @@ def DecisionTree(data,label,depth) :
         #print(len(r_dataset))
         #print(len(l_label))
         #print(len(r_label))
-        node = Node(attribute = attribute, value = value)  #node <- a new decision tree with root as split value
+        node = {"attribute" : attribute, "value" : value, "left" : {} , "right" : {}, "leaf" : False}
+        #node = Node(attribute = attribute, value = value)  #node <- a new decision tree with root as split value
+
+        
+        if depth >= len(width) :
+            width.append(1)
+        else :
+            width[depth] += 1
+        
+        #width[depth] +=1
         l_branch, l_depth = DecisionTree(l_dataset,l_label,depth+1)
+        #width[depth] +=1
         r_branch, r_depth = DecisionTree(r_dataset,r_label,depth+1)
-        node.left = l_branch
-        node.right = r_branch
-        return node, max(l_depth,r_depth)
+
+        node["left"] = l_branch
+        node["right"] = r_branch
+        #print(width)
+        return node, max(l_depth,r_depth) 
     
 
 def main() :
     data, label = read_dataset("./wifi_db/clean_dataset.txt")
-    node, depth = DecisionTree(data,label,depth=0)
-    print(node)
+    tree, depth = DecisionTree(data,label,depth=0)
+    #print(tree)
     print(depth)
+    print(width)
+    #plt.createPlot(tree,depth)
 
 main()
