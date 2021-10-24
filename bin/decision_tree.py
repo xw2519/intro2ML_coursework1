@@ -4,39 +4,23 @@ tree.py
 Creates and manipulates the decision tree
 '''
 
-class Node: 
-    def __init__(self) -> None:
-        self.value = None 
-        self.label = None
-        self.tree_depth = None 
-        
-        self.right_child = None 
-        self.left_child = None
-
-    def create_node(data_subset, current_tree_depth):
-        '''
-        Determines the required values of the specified decision tree node
-        '''
-        ...
-        
-    def propagate_node(data_value):
-        '''
-        Propagate through the decision tree nodes to appropriate node based on Binary Search Tree principals
-        '''
-        ...
-    
+from bin.util import find_split
+import numpy as np    
     
 class Decision_tree: 
-    def __init__(self) -> None:
-        self.root_node = None
-        
-    def create_decision_tree(dataset): 
-        '''
-        Given a dataset, create the decision tree 
-        
-        :param dataset: Training dataset
-        '''
-        ...
+    def __init__(self, dataset, tree_depth) -> None:
+         
+        if len(np.unique(dataset[:, -1])) == 1: 
+            self.label = dataset[0, -1]
+        else: 
+            self.tree_depth = tree_depth + 1
+            self.label, self.value, left_sub_dataset, right_sub_dataset = find_split(dataset)
+            
+            print(self.value)
+                        
+            self.left_child = Decision_tree(left_sub_dataset, self.tree_depth)
+            self.right_child = Decision_tree(right_sub_dataset, self.tree_depth)
+                   
         
     def predict(data_value):
         '''
