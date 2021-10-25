@@ -1,5 +1,6 @@
 
-from bin.decision_tree import Decision_tree 
+from bin.decision_tree import decision_tree 
+from bin.util import read_dataset
 
 import numpy as np
 
@@ -11,16 +12,16 @@ Main python program accessible to the user and links all subprograms together
 
 if __name__ == "__main__":
     # Load data
-    clean_data = np.loadtxt("./wifi_db/clean_dataset.txt")
+    dataset, label = read_dataset("./wifi_db/clean_dataset.txt")
      
     # Shuffle and divide the data set appropriately
-    np.random.shuffle(clean_data)
+    np.random.shuffle(dataset)
     
-    training_set = clean_data[:int(len(clean_data) * 0.7)]
-    test_set = clean_data[int(len(clean_data) * 0.7):]
+    training_set = dataset[:int(len(dataset) * 0.7)]
+    test_set = dataset[int(len(dataset) * 0.7):]
     
     # Declare and create decision tree model
-    decision_tree_model = Decision_tree(clean_data, -1)
+    decision_tree_model = decision_tree(dataset = training_set, label = label, tree_depth = 0)
     
     
         
