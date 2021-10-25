@@ -7,43 +7,35 @@ util.py
 Contains helper functions
 '''
 def read_dataset(filepath):
+    '''
+    Given a filepath, read the file 
+    
+    Parameters:
+    filepath: Path to the file 
+    
+    Return:
+    dataset: Values of readings taken (columns 0 - 6)
+    labels: Labels associated with each reading (column 7)
+    '''
     dataset = np.loadtxt(filepath, usecols=[0,1,2,3,4,5,6]) 
-    y = np.loadtxt(filepath, usecols=[7])
+    labels = np.loadtxt(filepath, usecols=[7])
     
-    return dataset, y
-
-
-def calculate_set_entropy(dataset_list):
-    '''
-    Calculates the entropy for a given list of datasets
-    
-    :param1 dataset_list: List of dataset
-    :return entropy_result
-    '''
-    entropy_values = [] 
-    total_count = 0
-    
-    for dataset in dataset_list:
-        # Calculate dataset entropy
-        dataset_length = len(dataset)
-        total_count += dataset_length
-        unique_values = np.unique(dataset, return_counts=True)[1]
-        entropy = np.sum([-(value/dataset_length) * np.log2(value/dataset_length) for value in unique_values])
-        entropy_values.append((entropy, dataset_length))
-        
-    # Calculate and return the average entropy of the entire dataset 
-    return np.sum([(subset_length/(total_count)) * entropy_value for entropy_value, subset_length in iter(entropy_values)])
-    
+    return dataset, labels  
     
 def find_split(dataset: np.ndarray, label: np.ndarray):
     '''
     Given a dataset instance and labels, choose the attribute and the value that results in the highest information gain
     
-    :param1 dataset: Training dataset
-    :param2 label: Label array of dataset
-    :return node_attribute, value, cut_point
+    Parameters:
+    dataset: Training dataset 
+    label: Label array of dataset
+    
+    Return:
+    node_attribute: 
+    value: 
+    cut_point: 
     '''
-    total_information_gain = np.zeros((7,3))
+    total_information_gain = np.zeros((7, 3))
     
     if (len(dataset) == 2):
         node_attribute = 0
