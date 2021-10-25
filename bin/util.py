@@ -1,3 +1,5 @@
+from matplotlib import cm, colors
+
 import numpy as np
 import matplotlib.pyplot as matplot
 
@@ -37,8 +39,8 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
     
     Return:
     - node_attribute: 
-    - value: 
-    - cut_point: 
+    - split_value:                               
+    - cutting_points: 
     '''
     total_information_gain = np.zeros((7, 3))
     
@@ -182,9 +184,12 @@ def plot_decision_tree(decision_tree, width):
 def plot_confusion_matrix(confusion_matrix):
     figure, axis = matplot.subplots(1, 1)
     
-    matplot.imshow(confusion_matrix)
-    matplot.xlabel("predicted")
-    matplot.ylabel("true")
+    # Define colours used 
+    cmap = colors.ListedColormap(['lightcoral', 'lightgreen'])
+    
+    matplot.imshow(confusion_matrix, cmap = cmap)
+    matplot.xlabel("Predicted Labels")
+    matplot.ylabel("Actual Labels")
 
     label_list = ['1', '2', '3', '4']
 
@@ -196,9 +201,8 @@ def plot_confusion_matrix(confusion_matrix):
 
     for i in range(4):
         for j in range(4):
-            color = 'black' if i == j else 'w'
-            text = axis.text(i, j, np.round(confusion_matrix[i][j], 4),
-                           ha="center", va="center", color=color)
+            axis.text(i, j, np.round(confusion_matrix[i][j], 4), ha = "center", va = "center", color = 'black')
+            
     matplot.show()
 
 
