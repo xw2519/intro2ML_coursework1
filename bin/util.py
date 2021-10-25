@@ -109,10 +109,10 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
                     if prob == 0: continue
                     else: previous_entropy += -prob*np.log2(prob)
                     
-                total_information_gain = previous_entropy - rate1*entropy_left-rate2*entropy_right
+                information_gain = previous_entropy - rate1*entropy_left-rate2*entropy_right
 
-                if total_information_gain > highest_information_gain:
-                    highest_information_gain = total_information_gain
+                if information_gain > highest_information_gain:
+                    highest_information_gain = information_gain
                     cut = (value + cut_prev)/2
                     cut_point = i
                     
@@ -127,48 +127,4 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
 
     return node_attribute, value, int(cut_point)
         
-'''
-def generate_decison_tree_graph():
-
-    # Clear previous plot
-    matplot.clf() 
-    
-    # Get binary tree paths
-    paths=[]
-    paths = self.get_paths(branches=paths)
-    
-    # Format plot
-    bbox_node = {'boxstyle': "round", 'ec': 'black', 'fc': 'lightgrey'}
-    bbox_label = {'boxstyle': "round", 'ec': 'black', 'fc': 'lightblue'}
-    fig, ax = matplot.subplots(figsize=(15, 8))
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    
-    # Plot the graph
-    for pair in paths:
-        path, label = pair
-        n = len(path)
-        if n > 4:
-            continue
-        dataset = 0.5
-        y = 0.90
-        for i, side in enumerate(path):
-
-            if side == 'l':
-                dataset -= 0.25 / i
-            if side == 'r':
-                dataset += 0.25 / i
-            if side != 'root':
-                y -= 0.25
-
-        if label[2] != 'o':
-            ax.text(dataset, y, s=label, ha='center', fontsize=16 - (1.5 * len(path)), bbox=bbox_node)
-            n = len(path)
-            ax.arrow(dataset, y, -0.25 / n, -0.25)
-            ax.arrow(dataset, y, 0.25 / n, -0.25)
-        else:
-            ax.text(dataset, y, s=label, ha='center', fontsize=16 - (1.5 * len(path)), bbox=bbox_label)
-            
-    plt.axis('off')
-    plt.show()
-'''
+        

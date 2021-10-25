@@ -46,3 +46,46 @@ def decision_tree(dataset, label, tree_depth):
         node["right"] = r_branch
 
         return node, max(l_depth,r_depth) 
+
+def predict_dataset(test_dataset, decision_tree_model):
+    '''
+    Given a test dataset and trained decision tree model, predict the appropriate labels of the test dataset
+    
+    Parameters:
+    test_dataset: Array of test values to predict 
+    decision_tree_model: Trained decision tree using training dataset
+    
+    Return:
+    predicted_labels: Array of predicted labels of 'test_dataset'
+    '''
+
+    return [ predict_single_instance(test_dataset[i, :], decision_tree_model) for i in range(len(test_dataset)) ]
+    
+    '''
+    # Declare empty 'predicted_labels' array to the size of 'test_dataset'
+    predicted_labels = np.empty(len(test_dataset),)
+    
+    for i in range(len(test_dataset)): predicted_labels[i] = predict_single_instance(test_dataset[i, :], decision_tree_model)
+
+    return decision_tree_model
+    '''
+
+def predict_single_instance(test_instance, decision_tree_model):
+    '''
+    Given a single test instance and trained decision tree model, predict the appropriate label of that single test instance
+    
+    Parameters:
+    test_instance: Test value to predict 
+    decision_tree_model: Trained decision tree using training dataset
+    
+    Return:
+    predicted_labels: Predicted label of 'test_instance'
+    '''
+    if (decision_tree_model["leaf"] == True): 
+        # If "leaf" node is reached, prediction is complete and return the predicted class
+        return decision_tree["class"]
+    else: 
+        # If "leaf" node is not reached, traverse the decision tree
+        if test_instance[ decision_tree["attribute"] ] <= decision_tree["value"]: return predict_single_instance(test_instance, decision_tree["left"])
+        else: return predict_single_instance(test_instance, decision_tree["right"])
+    

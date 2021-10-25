@@ -1,5 +1,5 @@
 
-from bin.decision_tree import decision_tree 
+from bin.decision_tree import decision_tree, predict_dataset
 from bin.util import read_dataset
 
 import numpy as np
@@ -21,7 +21,8 @@ if __name__ == "__main__":
     test_set = dataset[int(len(dataset) * 0.7):]
     
     # Declare and create decision tree model
-    decision_tree_model = decision_tree(dataset = training_set, label = label, tree_depth = 0)
+    decision_tree_model = decision_tree(dataset = training_set, label = label, tree_depth = 0)    
     
+    result = predict_dataset(test_set, decision_tree_model)
     
-        
+    print(result)
