@@ -1,5 +1,6 @@
 import numpy as np 
 import plot as plt
+import plot2 as plt2
 import sys
 import find_split as fs
 
@@ -111,5 +112,6 @@ def main() :
     print(depth)
     print(width)
     #plt.createPlot(tree,depth)
+    plt2.createPlot(tree,depth,width)
 
 main()
