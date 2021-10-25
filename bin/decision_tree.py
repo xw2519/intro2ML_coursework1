@@ -1,18 +1,30 @@
+from bin.util import find_split
+import numpy as np    
+
 '''
 tree.py
     
 Creates and manipulates the decision tree
 '''
 
-from bin.util import find_split
-import numpy as np    
-
 # Global variable declaration 
 tree_depth = 0
 width = [0,0,0,0,0]
 
 # Decision tree functions
-def decision_tree(dataset, label, tree_depth):
+def create_decision_tree(training_dataset, label, tree_depth):
+    '''
+    Given a training dataset, labels and initial tree depth, create the decision tree
+    
+    Parameters:
+    - training_dataset: Array of values to train the decision tree 
+    - label: Array of labels associated with provided training dataset
+    - tree_depth: Value indicating the current depth of the tree
+    
+    Return:
+    - node: A decision tree model in dictionary form
+    - max_depth: The maximum depth of the decision tree model
+    '''
     [classes, unique_label] = np.unique(label, return_inverse=True) 
     
     if(len(classes) == 1):
@@ -23,10 +35,10 @@ def decision_tree(dataset, label, tree_depth):
         
         return leaf_node, tree_depth
     else:
-        attribute, value, cut_point = find_split(dataset, label) 
+        attribute, value, cut_point = find_split(training_dataset, label) 
 
-        order = np.argsort(dataset[:, attribute])
-        data = dataset[order]
+        order = np.argsort(training_dataset[:, attribute])
+        data = training_dataset[order]
         label = label[order]
         
         l_dataset=data[:cut_point] 
@@ -40,24 +52,25 @@ def decision_tree(dataset, label, tree_depth):
         if tree_depth >= len(width): width.append(1)
         else: width[tree_depth] += 1
         
-        l_branch, l_depth = decision_tree(l_dataset, l_label,tree_depth+1)
-        r_branch, r_depth = decision_tree(r_dataset, r_label,tree_depth+1)
+        l_branch, l_depth = create_decision_tree(l_dataset, l_label,tree_depth+1)
+        r_branch, r_depth = create_decision_tree(r_dataset, r_label,tree_depth+1)
 
         node["left"] = l_branch
         node["right"] = r_branch
 
-        return node, max(l_depth,r_depth) 
+        return node, max(l_depth, r_depth) 
+
 
 def predict_dataset(test_dataset, decision_tree_model):
     '''
     Given a test dataset and trained decision tree model, predict the appropriate labels of the test dataset
     
     Parameters:
-    test_dataset: Array of test values to predict 
-    decision_tree_model: Trained decision tree using training dataset
+    - test_dataset: Array of test values to predict 
+    - decision_tree_model: Trained decision tree using training dataset
     
     Return:
-    predicted_labels: Array of predicted labels of 'test_dataset'
+    - predicted_labels: Array of predicted labels of 'test_dataset'
     '''
     return [ predict_single_instance(test_dataset[i, :], decision_tree_model) for i in range(len(test_dataset)) ]
 
@@ -80,4 +93,4 @@ def predict_single_instance(test_instance, decision_tree_model):
         # If "leaf" node is not reached, traverse the decision tree
         if test_instance[ decision_tree_model["attribute"] ] <= decision_tree_model["value"]: return predict_single_instance(test_instance, decision_tree_model["left"])
         else: return predict_single_instance(test_instance, decision_tree_model["right"])
-    
+

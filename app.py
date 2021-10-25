@@ -28,3 +28,8 @@ if __name__ == "__main__":
     
     print(result)
     '''
+    
+    dataset=np.array([[1,2,3,4,5,6,7],[2,3,4,5,6,7,8]])
+    decision_tree={"attribute":0,"value":0,"left":{"attribute":3,"value":4,"left":{"class":15,"leaf":True},"right":{"class":14,"leaf":True},"leaf":False},"right":{"attribute":5,"value":8,"left":{"class":11,"leaf":True},"right":{"class":12,"leaf":True},"leaf":False},"leaf":False}
+    y = predict_dataset(dataset, decision_tree)
+    print(y)

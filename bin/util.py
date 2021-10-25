@@ -6,34 +6,36 @@ util.py
 
 Contains helper functions
 '''
+
 def read_dataset(filepath):
     '''
     Given a filepath, read the file 
     
     Parameters:
-    filepath: Path to the file 
+    - filepath: Path to the file 
     
     Return:
-    dataset: Values of readings taken (columns 0 - 6)
-    labels: Labels associated with each reading (column 7)
+    - dataset: Values of readings taken (columns 0 - 6)
+    - labels: Labels associated with each reading (column 7)
     '''
     dataset = np.loadtxt(filepath, usecols=[0,1,2,3,4,5,6]) 
     labels = np.loadtxt(filepath, usecols=[7])
     
     return dataset, labels  
+ 
     
 def find_split(dataset: np.ndarray, label: np.ndarray):
     '''
     Given a dataset instance and labels, choose the attribute and the value that results in the highest information gain
     
     Parameters:
-    dataset: Training dataset 
-    label: Label array of dataset
+    - dataset: Training dataset 
+    - label: Label array of dataset
     
     Return:
-    node_attribute: 
-    value: 
-    cut_point: 
+    - node_attribute: 
+    - value: 
+    - cut_point: 
     '''
     total_information_gain = np.zeros((7, 3))
     
@@ -88,7 +90,7 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
 
                 entropy_right=0
                 for prob in prob_right:
-                    if prob == 0: continue
+                    if (prob == 0): continue
                     else: entropy_right+=-prob*np.log2(prob)
 
                 rate1 = (i)/float(len(A))
@@ -98,7 +100,7 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
                 previous_entropy = 0
 
                 for prob in total_prob:
-                    if prob == 0: continue
+                    if (prob == 0): continue
                     else: previous_entropy += -prob*np.log2(prob)
                     
                 information_gain = previous_entropy - rate1*entropy_left-rate2*entropy_right
@@ -118,5 +120,13 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
     cut_point = total_information_gain[node_attribute, 2]
 
     return node_attribute, value, int(cut_point)
-        
-        
+
+
+# Define style and colour of node and arrow
+node = dict(boxstyle = "round4", fc = "0.8")
+arrow_args = dict(arrowstyle="<-")
+
+
+def create_decision_tree_graph(decision_tree, max_depth, width):
+    ...
+
