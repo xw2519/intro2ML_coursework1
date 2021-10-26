@@ -24,16 +24,14 @@ def createPlot(decision_tree,width):
     record=np.zeros((len(width),))
     #print(record.shape)
     parentPt=(0,1)
-    plotTree(decision_tree["left"],np.array(width),record,1,parentPt,-1.0)
-    plotTree(decision_tree["right"],np.array(width),record,1,parentPt,1.0)
+    plotTree(decision_tree["left"],np.array(width),record,1,parentPt)
+    plotTree(decision_tree["right"],np.array(width),record,1,parentPt)
     # start to loop over 
 
     plt.savefig('tree2.jpg',bbox_inches='tight')
     print('Plot done, saved in tree2.jpg')
 
-def plotTree(decision_tree,width,record,cur_depth,parentPt,left):
-    # left = -1.0, left branch, right =1.0, right branch 
-
+def plotTree(decision_tree,width,record,cur_depth,parentPt):
     cur_num = record[cur_depth]
     max_width=np.max(width)*0.25
     node_num = width[cur_depth]
@@ -52,8 +50,8 @@ def plotTree(decision_tree,width,record,cur_depth,parentPt,left):
     else:
         message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
         plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
-        plotTree(decision_tree["left"],width,record,cur_depth+1,curPt,-1.0)
-        plotTree(decision_tree["right"],width,record,cur_depth+1,curPt,1.0)
+        plotTree(decision_tree["left"],width,record,cur_depth+1,curPt)
+        plotTree(decision_tree["right"],width,record,cur_depth+1,curPt)
 
 '''
 decision_tree={"attribute":0,"value":0,"left":{"attribute":3,"value":4,"left":{"class":15,"leaf":True},"right":{"class":14,"leaf":True},"leaf":False},"right":{"attribute":5,"value":8,"left":{"class":11,"leaf":True},"right":{"class":12,"leaf":True},"leaf":False},"leaf":False}

@@ -28,9 +28,13 @@ def createPlot(decision_tree,max_depth):
 
 def plotTree(decision_tree,max_depth,cur_depth,parentPt,left):
     # left = -1.0, left branch, right =1.0, right branch 
-    width=0.005
-    param=max_depth-cur_depth
-    change_height=1.5
+    #param=max_depth-cur_depth #for plotting whole picture
+    width=0.12
+    if max_depth>=8:
+        param=max_depth-cur_depth-7
+    else: 
+        param=max_depth-cur_depth
+    change_height=0.5
     curPt=parentPt[0]+left*width*pow(2,param)/4,parentPt[1]-change_height
     if decision_tree["leaf"]==True:
         #print("leaf here")
