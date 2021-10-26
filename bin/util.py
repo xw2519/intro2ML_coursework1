@@ -225,7 +225,7 @@ def print_evaluation_metrics(accuracy, precision, recall, f_score):
     
     Return: None
     '''
-    print('--------- Evaluation Matrics ---------')
+    print('--------- Evaluation Metrics ---------')
     print('Accuracy:', accuracy)
     print('Precision:  ', precision)
     print('Recall:     ', recall)

@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 decision_tree_model.jpg
+decistion_tree.png

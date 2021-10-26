@@ -1,8 +1,10 @@
+import matplotlib
 from bin.decision_tree import create_decision_tree, predict_dataset
 from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics
 from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix, print_evaluation_metrics
 from bin.decision_tree import width
 
+from sklearn import tree
 '''
 app.py
 
@@ -24,7 +26,19 @@ if __name__ == "__main__":
     result = predict_dataset(test_set, decision_tree_model)
     confusion_matrix = calculate_confusion_matrix(result, test_label)
     
+    sklearn_tree = tree.DecisionTreeClassifier()
+    sklearn_tree = sklearn_tree.fit(training_set, training_label)
+    
+    fig = matplotlib.pyplot.figure(figsize=(50, 50))
+    _ = tree.plot_tree(sklearn_tree, filled=True)
+
+    
+    fig.savefig("decistion_tree.png", bbox_inches = "tight")
+
+    
     accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
+    print(sklearn_tree.tree_.max_depth)
+    print("Max depth: ", max_tree_depth)
     print_evaluation_metrics(accuracy, precision, recall, f_score)
     
     '''
