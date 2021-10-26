@@ -21,23 +21,20 @@ def prune_tree(training_set, validation_set, trained_tree):
     explored_nodes = []                # contains all explored nodes
 
 
-    while not pruned:
+    while not (pruned and (stack == [])):
 
-        pruned = True
-        explored_nodes = []
+        if stack == []:                # reset when all nodes of tree have been visited
+            pruned = True
+            explored_nodes = []
 
-        if ((current_node['left']['leaf']) and (current_node['right']['leaf'])):  # if the current node has 2 leaves
-
-            # try to prune the tree
-
-            pruned_node = current_node                                            # node to be removed
-
-            unpruned_eval = evaluate(validation_set, trained_tree)                # evaluate before pruning
+        if ((current_node['left']['leaf']) and (current_node['right']['leaf'])):  # if the current node has 2 leaves, try to prune the tree
 
 
-            search_set = np.copy(training_set)                                    # find the value of the leaf to replace the current node
+            unpruned_eval = evaluate(validation_set, trained_tree)                                         # evaluate before pruning
+
+            search_set = np.copy(training_set)                                                             # find the label of the leaf to replace the current node
             for i in range(len(stack)):
-                if i < len(stack):
+                if i < len(stack)-1:
                     if stack[i]['left'] == stack[i+1]:
                         search_set = search_set[ search_set[node[:,'attribute']] <= node['value'] ]
                     else:
@@ -47,24 +44,31 @@ def prune_tree(training_set, validation_set, trained_tree):
                         search_set = search_set[ search_set[node[:,'attribute']] <= node['value'] ]
                     else:
                         search_set = search_set[ search_set[node[:,'attribute']] >  node['value'] ]
+            value = collections.Counter(search_set[:,7]).most_common(1)[0]                                 # get the most common label from this subset of the training set
 
-            value = collections.Counter(search_set[:,7]).most_common(1)[0]
+            new_leaf = {"attribute" : 7, "value" : value, "left" : {} , "right" : {}, "leaf" : True}       # create leaf to replace current node
 
-            current_node = {"attribute" : 7, "value" : value, "left" : {} , "right" : {}, "leaf" : True}    # create leaf to replace current node
+            if stack[-1]['left'] == current_node:                                                          # replace current node with leaf
+                stack[-1]['left']  = new_leaf
+            else:
+                stack[-1]['right'] = new_leaf
 
-            pruned_eval = evaluate(validation_set, trained_tree)                  # evaluate after pruning
+            pruned_eval = evaluate(validation_set, trained_tree)                                           # evaluate after pruning
 
 
-            # if pruning reduces performance, undo and continue traversing tree
 
-            if pruned_eval <= unpruned_eval:
-                current_node = pruned_node
+            if pruned_eval <= unpruned_eval:                                                   # if pruning reduces performance, undo the pruning and continue traversing tree
+                if stack[-1]['left'] == new_leaf:
+                    stack[-1]['left']  = current_node
+                else:
+                    stack[-1]['right'] = current_node
                 explored_nodes.append(current_node['left'])
                 explored_nodes.append(current_node['right'])
-            else:
+            else:                                                                              # if pruning improved performance, set flag and continue
                 pruned = False
 
             current_node = stack.pop()
+
 
         else:                                                                     # if current node does NOT have 2 leaves, keep traversing tree
 
@@ -76,11 +80,13 @@ def prune_tree(training_set, validation_set, trained_tree):
             if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):
                 current_node = stack.pop()
 
-            if (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):       # go to left node if it is not a leaf and has not been explored
+            if (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):        # go to left node if it is not a leaf and has not been explored
                stack.append(current_node)
                current_node = current_node['left']
-            else:                                      # if left node is a leaf, go to right node
+            else:                                                                                          # if left node is a leaf, go to right node
                 stack.append(current_node)
                current_node = current_node['right']
 
         explored_nodes.append(current_node)
+
+    return trained_tree
