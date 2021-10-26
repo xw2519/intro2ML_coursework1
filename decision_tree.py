@@ -109,9 +109,9 @@ def main() :
     data, label = read_dataset("./wifi_db/clean_dataset.txt")
     tree, depth = DecisionTree(data,label,depth=0)
     #print(tree)
-    print(depth)
-    print(width)
-    #plt.createPlot(tree,depth)
-    plt2.createPlot(tree,depth,width)
+    print(depth,' depth')
+    print(width,' width')
+    plt.createPlot(tree,depth)
+    plt2.createPlot(tree,width)
 
 main()

@@ -11,8 +11,8 @@ def plotNode(nodeTxt,parentPt, centerPt,nodeType):
     xytext=centerPt, textcoords='axes fraction',\
     va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
 
-def createPlot(decision_tree,max_depth,width):
-    print("Plotting the tree ...")
+def createPlot(decision_tree,width):
+    print("Plotting the tree v2 ...")
     fig = plt.figure(1,facecolor='white')
     fig.clf()
     createPlot.ax1 = plt.subplot(111,frameon=False,xticks=[], yticks=[])
@@ -22,48 +22,27 @@ def createPlot(decision_tree,max_depth,width):
     max_width=np.max(np.array(width))*0.12
     #print(max_width)
     record=np.zeros((len(width),))
-    print(record.shape)
+    #print(record.shape)
     parentPt=(0,1)
     plotTree(decision_tree["left"],np.array(width),record,1,parentPt,-1.0)
     plotTree(decision_tree["right"],np.array(width),record,1,parentPt,1.0)
     # start to loop over 
 
-    plt.savefig('tree.jpg',bbox_inches='tight')
+    plt.savefig('tree2.jpg',bbox_inches='tight')
+    print('Plot done, saved in tree2.jpg')
 
 def plotTree(decision_tree,width,record,cur_depth,parentPt,left):
     # left = -1.0, left branch, right =1.0, right branch 
-    '''
-    if max_depth>=6:
-        if cur_depth<=4:
-            width=0.12
-            param = max_depth-cur_depth-6
-        elif cur_depth<=8:
-            width=0.15
-            param = cur_depth-4
-        elif cur_depth<=12:
-            width=0.15
-            param=cur_depth-8
-        else:
-            width=0.15
-            param=cur_depth-12
-    else:
-        width=0.12
-        param = max_depth-cur_depth
-    #print(cur_depth,"cur_depth")
-    #print(param,"param")
-    
-    #width=0.01
-    #param=max_depth-cur_depth
-    '''
+
     cur_num = record[cur_depth]
-    max_width=np.max(width)*0.2/2 # 单边宽最大值
+    max_width=np.max(width)*0.25
     node_num = width[cur_depth]
-    step=max_width*2/(node_num)
+    step=max_width/(node_num-1)
     record[cur_depth]+=1
 
     change_height=0.3
-    #curPt=parentPt[0]+left*width*pow(2,param)/4,parentPt[1]-change_height
-    curPt=-max_width+step*cur_num,parentPt[1]-change_height
+
+    curPt=-max_width/2+step*cur_num,parentPt[1]-change_height
     if decision_tree["leaf"]==True:
         #print("leaf here")
         #print(curPt)

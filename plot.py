@@ -24,31 +24,12 @@ def createPlot(decision_tree,max_depth):
     # start to loop over 
 
     plt.savefig('tree.jpg',bbox_inches='tight')
+    print('Plot done, saved in tree.jpg')
 
 def plotTree(decision_tree,max_depth,cur_depth,parentPt,left):
     # left = -1.0, left branch, right =1.0, right branch 
-    
-    if max_depth>=6:
-        if cur_depth<=4:
-            width=0.12
-            param = max_depth-cur_depth-6
-        elif cur_depth<=8:
-            width=0.15
-            param = cur_depth-4
-        elif cur_depth<=12:
-            width=0.15
-            param=cur_depth-8
-        else:
-            width=0.15
-            param=cur_depth-12
-    else:
-        width=0.12
-        param = max_depth-cur_depth
-    #print(cur_depth,"cur_depth")
-    #print(param,"param")
-    
-    #width=0.01
-    #param=max_depth-cur_depth
+    width=0.005
+    param=max_depth-cur_depth
     change_height=1.5
     curPt=parentPt[0]+left*width*pow(2,param)/4,parentPt[1]-change_height
     if decision_tree["leaf"]==True:
