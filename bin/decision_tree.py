@@ -52,8 +52,8 @@ def create_decision_tree(training_dataset, label, tree_depth):
         if tree_depth >= len(width): width.append(1)
         else: width[tree_depth] += 1
         
-        l_branch, l_depth = create_decision_tree(l_dataset, l_label,tree_depth+1)
-        r_branch, r_depth = create_decision_tree(r_dataset, r_label,tree_depth+1)
+        l_branch, l_depth = create_decision_tree(l_dataset, l_label, tree_depth+1)
+        r_branch, r_depth = create_decision_tree(r_dataset, r_label, tree_depth+1)
 
         node["left"] = l_branch
         node["right"] = r_branch

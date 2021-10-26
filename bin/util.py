@@ -182,6 +182,14 @@ def plot_decision_tree(decision_tree, width):
 
 
 def plot_confusion_matrix(confusion_matrix):
+    '''
+    Given a 'confusion_matrix', plot and show the confusion matrix using matplotlib
+    
+    Parameters:
+    - confusion_matrix: Confusion matrix 
+    
+    Return: None
+    '''
     figure, axis = matplot.subplots(1, 1)
     
     # Define colours used 
@@ -200,11 +208,27 @@ def plot_confusion_matrix(confusion_matrix):
     axis.set_yticklabels(label_list)
 
     for i in range(4):
-        for j in range(4):
-            axis.text(i, j, np.round(confusion_matrix[i][j], 4), ha = "center", va = "center", color = 'black')
+        for j in range(4): axis.text(i, j, np.round(confusion_matrix[i][j], 4), ha = "center", va = "center", color = 'black')
             
     matplot.show()
 
 
-
+def print_evaluation_metrics(accuracy, precision, recall, f_score):
+    '''
+    Prints the evaluation metrics of a testset
+    
+    Parameters:
+    - accuracy: Number of correctly classified examples divided by the total number of examples
+    - precision: Number of correctly classified positive divided by the total number of predicted positive 
+    - recall: Number of correctly classified positive divided by the total number of positive
+    - f_score: Performance measure of the classifier
+    
+    Return: None
+    '''
+    print('--------- Evaluation Matrics ---------')
+    print('Accuracy:', accuracy)
+    print('Precision:  ', precision)
+    print('Recall:     ', recall)
+    print('F1 Score:    ', f_score)
+    print()
 

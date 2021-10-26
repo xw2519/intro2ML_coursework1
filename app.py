@@ -1,6 +1,6 @@
 from bin.decision_tree import create_decision_tree, predict_dataset
-from bin.evaluation import calculate_confusion_matrix
-from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix
+from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics
+from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix, print_evaluation_metrics
 from bin.decision_tree import width
 
 '''
@@ -20,13 +20,12 @@ if __name__ == "__main__":
     test_label = label[int(len(label) * 0.7):]
     
     # Declare and create decision tree model
-    decision_tree_model, max_tree_depth = create_decision_tree(training_dataset = training_set, label = training_label, tree_depth = 0)    
-    
+    decision_tree_model, max_tree_depth = create_decision_tree(training_dataset = training_set, label = training_label, tree_depth = 0)  
     result = predict_dataset(test_set, decision_tree_model)
-    
     confusion_matrix = calculate_confusion_matrix(result, test_label)
-    print(plot_confusion_matrix(confusion_matrix))
     
+    accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
+    print_evaluation_metrics(accuracy, precision, recall, f_score)
     
     '''
     dataset=np.array([[1,2,3,4,5,6,7],[2,3,4,5,6,7,8]])
