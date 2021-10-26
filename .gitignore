@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 decision_tree_model.jpg
 decistion_tree.png
+output.txt

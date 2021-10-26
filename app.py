@@ -5,6 +5,9 @@ from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusio
 from bin.decision_tree import width
 
 from sklearn import tree
+import numpy
+import sys
+numpy.set_printoptions(threshold=sys.maxsize)
 '''
 app.py
 
@@ -15,8 +18,8 @@ if __name__ == "__main__":
     # Load and shuffle data
     dataset, label = read_and_shuffle_dataset("./wifi_db/clean_dataset.txt")
     
-    training_set = dataset[:int(len(dataset) * 0.7)]
-    training_label = label[:int(len(label) * 0.7)]
+    training_set = dataset[:int(len(dataset))]
+    training_label = label[:int(len(label))]
     
     test_set = dataset[int(len(dataset) * 0.7):]
     test_label = label[int(len(label) * 0.7):]
@@ -26,6 +29,7 @@ if __name__ == "__main__":
     result = predict_dataset(test_set, decision_tree_model)
     confusion_matrix = calculate_confusion_matrix(result, test_label)
     
+    ''' 
     sklearn_tree = tree.DecisionTreeClassifier()
     sklearn_tree = sklearn_tree.fit(training_set, training_label)
     
@@ -37,16 +41,17 @@ if __name__ == "__main__":
 
     
     accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
-    print(sklearn_tree.tree_.max_depth)
-    print("Max depth: ", max_tree_depth)
-    print_evaluation_metrics(accuracy, precision, recall, f_score)
     
-    '''
+    
+    print("Width: ", width)
+    print("Max depth: ", max_tree_depth)
+    
+    print("SK depth: ", sklearn_tree.tree_.max_depth)
+    
     dataset=np.array([[1,2,3,4,5,6,7],[2,3,4,5,6,7,8]])
     decision_tree={"attribute":0,"value":0,"left":{"attribute":3,"value":4,"left":{"class":15,"leaf":True},"right":{"class":14,"leaf":True},"leaf":False},"right":{"attribute":5,"value":8,"left":{"class":11,"leaf":True},"right":{"class":12,"leaf":True},"leaf":False},"leaf":False}
     y = predict_dataset(dataset, decision_tree)
     print(y)
-    
     
     plot_decision_tree(decision_tree_model, width)
     '''

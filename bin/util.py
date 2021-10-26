@@ -21,7 +21,8 @@ def read_and_shuffle_dataset(filepath):
     - labels: Labels associated with each reading (column 7)
     '''
     loaded_data = np.loadtxt(filepath)
-    np.random.shuffle(loaded_data)
+    
+    #np.random.shuffle(loaded_data)
      
     dataset = loaded_data[:, [0, 1, 2, 3, 4, 5, 6]]
     labels = loaded_data[:, 7]
@@ -53,10 +54,10 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
     
     for n in range(7):
         A = dataset[:, n]
-
         order_A = np.argsort(A)
+        
         A = A[order_A]
-        label = label[order_A]
+        ordered_label = label[order_A]
 
         prev_data = A[0]
         cut_prev = A[0]
@@ -70,10 +71,10 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
             if (i == (len(A) - 1)): break
             elif (i == 0): continue
 
-            if (label[i-1] == 1): current[0] += 1
-            elif (label[i-1] == 2): current[1] += 1
-            elif (label[i-1] == 3): current[2] += 1
-            elif (label[i-1] == 4): current[3] += 1
+            if (ordered_label[i-1] == 1): current[0] += 1
+            elif (ordered_label[i-1] == 2): current[1] += 1
+            elif (ordered_label[i-1] == 3): current[2] += 1
+            elif (ordered_label[i-1] == 4): current[3] += 1
             else: 
                 print("ERROR")
                 break
@@ -84,7 +85,7 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
             else:         
                 left_total = i
                 right_total = len(A) - i
-
+                
                 prob_left = current/left_total
                 prob_right = (total - current)/right_total
 
@@ -92,7 +93,7 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
                 for prob in prob_left:
                     if (prob == 0): continue
                     else: entropy_left += -prob*np.log2(prob)
-
+                
                 entropy_right=0
                 for prob in prob_right:
                     if (prob == 0): continue
@@ -117,7 +118,6 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
                     
                 prev_data = value 
                 cut_prev = value
-                
         total_information_gain[n] = [highest_information_gain, cut, cut_point]
     
     node_attribute = np.argmax(total_information_gain[:, 0], axis=0)
