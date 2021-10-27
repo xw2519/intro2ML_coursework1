@@ -34,8 +34,8 @@ if __name__ == "__main__":
     print_evaluation_metrics(accuracy, precision, recall, f_score) 
     
     # Evaluation matrix 
-    average_accuracy, average_precision, average_recall, average_f1_score = cross_validation("./wifi_db/clean_dataset.txt")
-    print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f1_score)
+    average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/clean_dataset.txt")
+    print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix)
     
     ''' 
     print(max_tree_depth)
@@ -51,7 +51,6 @@ if __name__ == "__main__":
     
     fig.savefig("decistion_tree.png", bbox_inches = "tight")
 
-    
     accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
     
     

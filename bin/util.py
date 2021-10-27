@@ -233,7 +233,7 @@ def print_evaluation_metrics(accuracy, precision, recall, f_score):
     print()
 
 
-def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score):
+def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score, average_confusion_matrix):
     '''
     Prints the evaluation metrics of a testset
     
@@ -246,9 +246,11 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
     Return: None
     '''
     print('--------- Cross Validation Metrics ---------')    
+    print('Average Confusion Matrix:')
+    print(average_confusion_matrix)
+    print()
     print('Average Accuracy:             ', average_accuracy)
     print('Average Precision:           ', average_precision)
     print('Average Recall:              ', average_recall)
     print('Average F1 Score:            ', average_f_score)
-    
     print()

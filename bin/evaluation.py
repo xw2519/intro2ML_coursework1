@@ -50,9 +50,18 @@ def calculate_evaluation_metrics(confusion_matrix):
 
 def cross_validation(filepath):
     '''
-    Divides the data set into 10 folds and uses each fold as test set once to perform cross validation.
+    Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training set.
     
-    Calculates metrics for each fold to get standard errors.
+    Calculates metrics for each fold to get the average metric.
+    
+    Parameters:
+    - filepath: File path to the dataset 
+    
+    Return:
+    - average_accuracy: Number of correctly classified examples divided by the total number of examples
+    - average_precision: Number of correctly classified positive divided by the total number of predicted positive 
+    - average_recall: Number of correctly classified positive divided by the total number of positive
+    - average_f1_score: Performance measure of the classifier
     '''
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
@@ -83,6 +92,7 @@ def cross_validation(filepath):
     precision_list = []
     recall_list = []
     f1_score_list = []
+    confusion_matrix_sum = np.zeros((4, 4))
     
     for i in range(len(confusion_matrix_list)):
         accuracy, precision, recall, f1_score = calculate_evaluation_metrics(confusion_matrix_list[i])
@@ -91,11 +101,13 @@ def cross_validation(filepath):
         precision_list.append(precision)
         recall_list.append(recall)
         f1_score_list.append(f1_score)
+        confusion_matrix_sum += confusion_matrix_list[i]
     
     average_accuracy = np.mean(np.array(accuracy_list), axis=0)
     average_precision = np.mean(np.array(precision_list), axis=0)
     average_recall = np.mean(np.array(recall_list), axis=0)
     average_f1_score = np.mean(np.array(f1_score_list), axis=0)
+    average_confusion_matrix = confusion_matrix_sum / 10
     
-    return average_accuracy, average_precision, average_recall, average_f1_score
+    return average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix
     
