@@ -22,7 +22,7 @@ def read_and_shuffle_dataset(filepath):
     '''
     loaded_data = np.loadtxt(filepath)
     
-    #np.random.shuffle(loaded_data)
+    np.random.shuffle(loaded_data)
      
     dataset = loaded_data[:, [0, 1, 2, 3, 4, 5, 6]]
     labels = loaded_data[:, 7]
