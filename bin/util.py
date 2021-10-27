@@ -226,9 +226,29 @@ def print_evaluation_metrics(accuracy, precision, recall, f_score):
     Return: None
     '''
     print('--------- Evaluation Metrics ---------')
-    print('Accuracy:', accuracy)
-    print('Precision:  ', precision)
-    print('Recall:     ', recall)
-    print('F1 Score:    ', f_score)
+    print('Accuracy:                     ', accuracy)
+    print('Precision:                   ', precision)
+    print('Recall:                      ', recall)
+    print('F1 Score:                    ', f_score)
     print()
 
+
+def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score):
+    '''
+    Prints the evaluation metrics of a testset
+    
+    Parameters:
+    - accuracy: Number of correctly classified examples divided by the total number of examples
+    - precision: Number of correctly classified positive divided by the total number of predicted positive 
+    - recall: Number of correctly classified positive divided by the total number of positive
+    - f_score: Performance measure of the classifier
+    
+    Return: None
+    '''
+    print('--------- Cross Validation Metrics ---------')    
+    print('Average Accuracy:             ', average_accuracy)
+    print('Average Precision:           ', average_precision)
+    print('Average Recall:              ', average_recall)
+    print('Average F1 Score:            ', average_f_score)
+    
+    print()

@@ -1,3 +1,4 @@
+from .decision_tree import create_decision_tree, predict_dataset
 import numpy as np    
 
 '''
@@ -46,4 +47,55 @@ def calculate_evaluation_metrics(confusion_matrix):
     
     return accuracy, precision, recall, f_score
     
+
+def cross_validation(filepath):
+    '''
+    Divides the data set into 10 folds and uses each fold as test set once to perform cross validation.
+    
+    Calculates metrics for each fold to get standard errors.
+    '''
+    # Load and shuffle the data
+    loaded_data = np.loadtxt(filepath)
+    np.random.shuffle(loaded_data)
+    
+    # Create 10 folds
+    loaded_data = loaded_data.reshape((10, -1, 8))
+    
+    # Perform cross validation 
+    confusion_matrix_list = [] 
+    for index, test_fold in enumerate(loaded_data):
+        # Remove test fold from training fold
+        training_folds = np.vstack(np.delete(loaded_data, index, axis = 0))
+        training_dataset = training_folds[:, [0, 1, 2, 3, 4, 5, 6]]
+        training_labels = training_folds[:, 7]
+        
+        # Train decision tree model 
+        decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)
+        
+        # Predict using test fold
+        predictions = predict_dataset(test_fold, decision_tree_model)
+        
+        # Calculate confusion matrix
+        confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))
+        
+    # Calculate and return cross validation results
+    accuracy_list = []
+    precision_list = []
+    recall_list = []
+    f1_score_list = []
+    
+    for i in range(len(confusion_matrix_list)):
+        accuracy, precision, recall, f1_score = calculate_evaluation_metrics(confusion_matrix_list[i])
+        
+        accuracy_list.append(accuracy)
+        precision_list.append(precision)
+        recall_list.append(recall)
+        f1_score_list.append(f1_score)
+    
+    average_accuracy = np.mean(np.array(accuracy_list), axis=0)
+    average_precision = np.mean(np.array(precision_list), axis=0)
+    average_recall = np.mean(np.array(recall_list), axis=0)
+    average_f1_score = np.mean(np.array(f1_score_list), axis=0)
+    
+    return average_accuracy, average_precision, average_recall, average_f1_score
     
