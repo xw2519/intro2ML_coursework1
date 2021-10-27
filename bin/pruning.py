@@ -14,7 +14,7 @@ def prune_tree(training_set, validation_set, trained_tree):
 
     pruned         = False             # pruning is complete if a whole pass of the tree is made without removing nodes
 
-    stack          = []                # stores current path in tree, used for traversing tree without recursion
+    stack          = []                # stores current path in tree, used for traversing tree without recursion and finding subsets of training set
 
     current_node   = trained_tree      # current node of interest
 
@@ -77,13 +77,12 @@ def prune_tree(training_set, validation_set, trained_tree):
             if (current_node['right']['leaf']) and (current_node['right'] not in explored_nodes):
                 explored_nodes.append(current_node['right'])
 
-            if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):
+            if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):     # if both connected nodes have been explored, go to parent node
                 current_node = stack.pop()
-
-            if (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):        # go to left node if it is not a leaf and has not been explored
+            elif (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):      # go to left node if it is not a leaf and has not been explored
                stack.append(current_node)
                current_node = current_node['left']
-            else:                                                                                          # if left node is a leaf, go to right node
+            else:                                                                                          # if left node is a leaf or has been explored, go to right node
                 stack.append(current_node)
                current_node = current_node['right']
 
