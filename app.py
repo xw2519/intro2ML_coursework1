@@ -1,7 +1,7 @@
 import matplotlib
 from bin.decision_tree import create_decision_tree, predict_dataset
-from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics
-from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix, print_evaluation_metrics
+from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics, cross_validation
+from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix, print_evaluation_metrics, print_cross_validation_metrics
 from bin.decision_tree import width
 
 from sklearn import tree
@@ -18,8 +18,8 @@ if __name__ == "__main__":
     # Load and shuffle data
     dataset, label = read_and_shuffle_dataset("./wifi_db/clean_dataset.txt")
     
-    training_set = dataset[:int(len(dataset))]
-    training_label = label[:int(len(label))]
+    training_set = dataset[:int(len(dataset) * 0.7)]
+    training_label = label[:int(len(label) * 0.7)]
     
     test_set = dataset[int(len(dataset) * 0.7):]
     test_label = label[int(len(label) * 0.7):]
@@ -27,9 +27,21 @@ if __name__ == "__main__":
     # Declare and create decision tree model
     decision_tree_model, max_tree_depth = create_decision_tree(training_dataset = training_set, label = training_label, tree_depth = 0)  
     result = predict_dataset(test_set, decision_tree_model)
+    
     confusion_matrix = calculate_confusion_matrix(result, test_label)
+    accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
+    
+    print_evaluation_metrics(accuracy, precision, recall, f_score) 
+    
+    # Evaluation matrix 
+    average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/clean_dataset.txt")
+    print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix)
     
     ''' 
+    print(max_tree_depth)
+    print_evaluation_metrics(accuracy, precision, recall, f_score) 
+    plot_confusion_matrix(confusion_matrix=confusion_matrix)
+    
     sklearn_tree = tree.DecisionTreeClassifier()
     sklearn_tree = sklearn_tree.fit(training_set, training_label)
     
@@ -39,7 +51,6 @@ if __name__ == "__main__":
     
     fig.savefig("decistion_tree.png", bbox_inches = "tight")
 
-    
     accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
     
     

@@ -22,7 +22,7 @@ def read_and_shuffle_dataset(filepath):
     '''
     loaded_data = np.loadtxt(filepath)
     
-    #np.random.shuffle(loaded_data)
+    np.random.shuffle(loaded_data)
      
     dataset = loaded_data[:, [0, 1, 2, 3, 4, 5, 6]]
     labels = loaded_data[:, 7]
@@ -226,9 +226,31 @@ def print_evaluation_metrics(accuracy, precision, recall, f_score):
     Return: None
     '''
     print('--------- Evaluation Metrics ---------')
-    print('Accuracy:', accuracy)
-    print('Precision:  ', precision)
-    print('Recall:     ', recall)
-    print('F1 Score:    ', f_score)
+    print('Accuracy:                     ', accuracy)
+    print('Precision:                   ', precision)
+    print('Recall:                      ', recall)
+    print('F1 Score:                    ', f_score)
     print()
 
+
+def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score, average_confusion_matrix):
+    '''
+    Prints the evaluation metrics of a testset
+    
+    Parameters:
+    - accuracy: Number of correctly classified examples divided by the total number of examples
+    - precision: Number of correctly classified positive divided by the total number of predicted positive 
+    - recall: Number of correctly classified positive divided by the total number of positive
+    - f_score: Performance measure of the classifier
+    
+    Return: None
+    '''
+    print('--------- Cross Validation Metrics ---------')    
+    print('Average Confusion Matrix:')
+    print(average_confusion_matrix)
+    print()
+    print('Average Accuracy:             ', average_accuracy)
+    print('Average Precision:           ', average_precision)
+    print('Average Recall:              ', average_recall)
+    print('Average F1 Score:            ', average_f_score)
+    print()
