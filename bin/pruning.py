@@ -24,9 +24,10 @@ def prune_tree(training_set, validation_set, trained_tree):
     explored_nodes = []                # contains all explored nodes
 
 
-    while not (pruned and (stack == [])):
+    while True:
 
-        if stack == []:                # reset when all nodes of tree have been visited
+        if (stack == []) and (current_node['right'] in explored_nodes):                # reset when all nodes of tree have been visited
+            if pruned: break
             pruned = True
             explored_nodes = []
 
@@ -55,20 +56,19 @@ def prune_tree(training_set, validation_set, trained_tree):
 
             if stack[-1]['left'] == current_node:                                                          # replace current node with leaf
                 stack[-1]['left']  = new_leaf
+                side = 'left'
             else:
                 stack[-1]['right'] = new_leaf
+                side = 'right'
 
             result = predict_dataset(validation_set[:,:7], trained_tree)                                    # evaluate before pruning
             confusion_matrix = calculate_confusion_matrix(result, validation_set[:,7])
             pruned_accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
 
-            #print('Compare: ', unpruned_accuracy, pruned_accuracy)
+            #print('Compare: ', unpruned_accuracy, pruned_accuracy, current_node['attribute'], current_node['value'])
 
             if pruned_accuracy <= unpruned_accuracy:                                           # if pruning reduces performance, undo the pruning and continue traversing tree
-                if stack[-1]['left'] == new_leaf:
-                    stack[-1]['left']  = current_node
-                else:
-                    stack[-1]['right'] = current_node
+                stack[-1][side] = current_node
                 explored_nodes.append(current_node['left'])
                 explored_nodes.append(current_node['right'])
             else:                                                                              # if pruning improved performance, set flag and continue
@@ -97,6 +97,8 @@ def prune_tree(training_set, validation_set, trained_tree):
         explored_nodes.append(current_node)
 
     return trained_tree
+
+
 
 def prune_with_cross_validation(filepath):
     '''
