@@ -15,21 +15,15 @@ while tree is not pruned:
 '''
 def prune_tree(training_set, validation_set, trained_tree):
 
-    pruned         = False             # pruning is complete if a whole pass of the tree is made without removing nodes
-
     stack          = []                # stores current path in tree, used for traversing tree without recursion and finding subsets of training set
 
     current_node   = trained_tree      # current node of interest
 
-    explored_nodes = []                # contains all explored nodes
+    explored_nodes = []                # contains recently explored nodes
 
 
-    while True:
+    while not ((stack == []) and (current_node['right'] in explored_nodes)):
 
-        if (stack == []) and (current_node['right'] in explored_nodes):                # reset when all nodes of tree have been visited
-            if pruned: break
-            pruned = True
-            explored_nodes = []
 
         if ((current_node['left']['leaf']) and (current_node['right']['leaf'])):  # if the current node has 2 leaves, try to prune the tree
 
@@ -69,12 +63,12 @@ def prune_tree(training_set, validation_set, trained_tree):
 
             if pruned_accuracy <= unpruned_accuracy:                                           # if pruning reduces performance, undo the pruning and continue traversing tree
                 stack[-1][side] = current_node
-                explored_nodes.append(current_node['left'])
-                explored_nodes.append(current_node['right'])
             else:                                                                              # if pruning improved performance, set flag and continue
-                pruned = False
                 #print('Removed: ', current_node)
+                pass
 
+            if current_node['left']  in explored_nodes: explored_nodes.remove(current_node['left'])
+            if current_node['right'] in explored_nodes: explored_nodes.remove(current_node['right'])
             current_node = stack.pop()
 
 
@@ -86,6 +80,8 @@ def prune_tree(training_set, validation_set, trained_tree):
                 explored_nodes.append(current_node['right'])
 
             if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):     # if both connected nodes have been explored, go to parent node
+                explored_nodes.remove(current_node['left'])
+                explored_nodes.remove(current_node['right'])
                 current_node = stack.pop()
             elif (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):      # go to left node if it is not a leaf and has not been explored
                stack.append(current_node)
@@ -128,7 +124,7 @@ def prune_with_cross_validation(filepath):
 
     for i, test_fold in enumerate(loaded_data):
 
-        train_valid_folds = np.vstack(np.delete(loaded_data, i, axis = 0))                           # Remove test fold from training/validation folds
+        train_valid_folds = np.delete(loaded_data, i, axis = 0)                                  # Remove test fold from training/validation folds
 
         best_valid_tree = ({},0)
 
@@ -147,8 +143,7 @@ def prune_with_cross_validation(filepath):
             pruned_accuracy, pprecision, precall, pf1_score = calculate_evaluation_metrics(pruned_confusion_matrix)
 
             if(pruned_accuracy > best_valid_tree[1]):
-                best_valid_tree[0] = pruned_decision_tree_model
-                best_valid_tree[1] = pruned_accuracy
+                best_valid_tree = (pruned_decision_tree_model, pruned_accuracy)
 
 
         predictions = predict_dataset(test_fold, best_valid_tree[0])                                     # Predict using test fold
