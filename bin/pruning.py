@@ -124,20 +124,37 @@ def prune_with_cross_validation(filepath):
 
     # Perform cross validation
     confusion_matrix_list = []
-    for index, test_fold in enumerate(loaded_data):
-        # Remove test fold from training fold
-        training_folds = np.vstack(np.delete(loaded_data, index, axis = 0))
-        training_dataset = training_folds[:, [0, 1, 2, 3, 4, 5, 6]]
-        training_labels = training_folds[:, 7]
 
-        # Train decision tree model
-        decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)
 
-        # Predict using test fold
-        predictions = predict_dataset(test_fold, decision_tree_model)
+    for i, test_fold in enumerate(loaded_data):
 
-        # Calculate confusion matrix
-        confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))
+        train_valid_folds = np.vstack(np.delete(loaded_data, i, axis = 0))                           # Remove test fold from training/validation folds
+
+        best_valid_tree = ({},0)
+
+        for j, validation_fold in enumerate(train_valid_folds):
+
+            training_folds   = np.vstack(np.delete(train_valid_folds, j, axis = 0))
+            training_dataset = training_folds[:,:7]
+            training_labels  = training_folds[:, 7]
+
+            decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)     # train decision tree model
+            pruned_decision_tree_model     = prune_tree(training_folds, validation_fold, decision_tree_model)                                 # prune decision tree model
+
+
+            pruned_predictions      = predict_dataset(validation_fold[:,:7], pruned_decision_tree_model)               # Predict using test fold
+            pruned_confusion_matrix = calculate_confusion_matrix(pruned_predictions, validation_fold[:, -1])           # Calculate confusion matrix
+            pruned_accuracy, pprecision, precall, pf1_score = calculate_evaluation_metrics(pruned_confusion_matrix)
+
+            if(pruned_accuracy > best_valid_tree[1]):
+                best_valid_tree[0] = pruned_decision_tree_model
+                best_valid_tree[1] = pruned_accuracy
+
+
+        predictions = predict_dataset(test_fold, best_valid_tree[0])                                     # Predict using test fold
+
+        confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))          # Calculate confusion matrix
+
 
     # Calculate and return cross validation results
     accuracy_list = []
