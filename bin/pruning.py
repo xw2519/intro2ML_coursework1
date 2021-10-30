@@ -15,78 +15,81 @@ while tree is not pruned:
 '''
 def prune_tree(training_set, validation_set, trained_tree):
 
-    stack          = []                # stores current path in tree, used for traversing tree without recursion and finding subsets of training set
-
-    current_node   = trained_tree      # current node of interest
-
-    explored_nodes = []                # contains recently explored nodes
-
+    # Store current path in tree.
+    # Traverses tree without recursion and finding subsets of training set. Stores recently explored nodes.
+    stack = []                
+    current_node = trained_tree # current node of interest      
+    explored_nodes = []               
 
     while not ((stack == []) and (current_node['right'] in explored_nodes)):
-
-
-        if ((current_node['left']['leaf']) and (current_node['right']['leaf'])):  # if the current node has 2 leaves, try to prune the tree
-
-
-            result = predict_dataset(validation_set[:,:7], trained_tree)                                    # evaluate before pruning
+        # If current node has 2 leaves, try prune the tree
+        if ((current_node['left']['leaf']) and (current_node['right']['leaf'])):  
+            # Evaluate unpruned model metrics
+            result = predict_dataset(validation_set[:, :7], trained_tree)                                    
             confusion_matrix = calculate_confusion_matrix(result, validation_set[:,7])
-            unpruned_accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
+            unpruned_accuracy, unpruned_precision, unpruned_recall, unpruned_f_score = calculate_evaluation_metrics(confusion_matrix)
 
-            search_set = np.copy(training_set)                                                             # find the label of the leaf to replace the current node
+            # Find label of the leaf to replace the current node
+            search_set = np.copy(training_set)                                                             
             for i in range(len(stack)):
                 if i < len(stack)-1:
-                    if stack[i]['left'] == stack[i+1]:
+                    if (stack[i]['left'] == stack[i+1]):
                         search_set = search_set[ search_set[:,stack[i]['attribute']] <= stack[i]['value'] ]
                     else:
                         search_set = search_set[ search_set[:,stack[i]['attribute']] >  stack[i]['value'] ]
                 else:
-                    if stack[i]['left'] == current_node:
+                    if (stack[i]['left'] == current_node):
                         search_set = search_set[ search_set[:,stack[i]['attribute']] <= stack[i]['value'] ]
                     else:
                         search_set = search_set[ search_set[:,stack[i]['attribute']] >  stack[i]['value'] ]
-            value = collections.Counter(search_set[:,7]).most_common(1)[0][0]                              # get the most common label from this subset of the training set
+                        
+            # Get most common label from this subset of the training set
+            value = collections.Counter(search_set[:, 7]).most_common(1)[0][0]                              
 
-            new_leaf = {"class" : value, "leaf" : True}                                                    # create leaf to replace current node
+            # Create leaf to replace current node
+            new_leaf = {"class" : value, "leaf" : True}                                                  
 
-            if stack[-1]['left'] == current_node:                                                          # replace current node with leaf
+            # Replace current node with leaf
+            if (stack[-1]['left'] == current_node):                                                          
                 stack[-1]['left']  = new_leaf
                 side = 'left'
             else:
                 stack[-1]['right'] = new_leaf
                 side = 'right'
 
-            result = predict_dataset(validation_set[:,:7], trained_tree)                                    # evaluate before pruning
+            # Evaluate pruned model metrics
+            result = predict_dataset(validation_set[:, :7], trained_tree)                                    
             confusion_matrix = calculate_confusion_matrix(result, validation_set[:,7])
-            pruned_accuracy, precision, recall, f_score = calculate_evaluation_metrics(confusion_matrix)
+            pruned_accuracy, pruned_precision, pruned_recall, pruned_f_score = calculate_evaluation_metrics(confusion_matrix)
 
-            #print('Compare: ', unpruned_accuracy, pruned_accuracy, current_node['attribute'], current_node['value'])
-
-            if pruned_accuracy <= unpruned_accuracy:                                           # if pruning reduces performance, undo the pruning and continue traversing tree
+            if pruned_accuracy <= unpruned_accuracy: 
+                # Pruning reduced performance, undo the pruning and continue traversing tree
                 stack[-1][side] = current_node
-            else:                                                                              # if pruning improved performance, set flag and continue
-                #print('Removed: ', current_node)
+            else:
+                # Pruning improved performance                                 
                 pass
 
             if current_node['left']  in explored_nodes: explored_nodes.remove(current_node['left'])
             if current_node['right'] in explored_nodes: explored_nodes.remove(current_node['right'])
             current_node = stack.pop()
+        
+        # If current node does NOT have 2 leaves, keep traversing tree
+        else:                                                                    
+            # Update explored nodes
+            if (current_node['left']['leaf']) and (current_node['left'] not in explored_nodes): explored_nodes.append(current_node['left'])
+            if (current_node['right']['leaf']) and (current_node['right'] not in explored_nodes): explored_nodes.append(current_node['right'])
 
-
-        else:                                                                     # if current node does NOT have 2 leaves, keep traversing tree
-
-            if (current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):
-                explored_nodes.append(current_node['left'])
-            if (current_node['right']['leaf']) and (current_node['right'] not in explored_nodes):
-                explored_nodes.append(current_node['right'])
-
-            if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):     # if both connected nodes have been explored, go to parent node
+            # If both connected nodes have been explored, go to parent node
+            if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):     
                 explored_nodes.remove(current_node['left'])
                 explored_nodes.remove(current_node['right'])
                 current_node = stack.pop()
-            elif (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):      # go to left node if it is not a leaf and has not been explored
+            # Go to left node if it is not a leaf and has not been explored
+            elif (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):      
                stack.append(current_node)
                current_node = current_node['left']
-            else:                                                                                          # if left node is a leaf or has been explored, go to right node
+            # Go to right node
+            else:                                                                                          
                 stack.append(current_node)
                 current_node = current_node['right']
 
@@ -138,9 +141,9 @@ def prune_with_cross_validation(filepath):
             pruned_decision_tree_model     = prune_tree(training_folds, validation_fold, decision_tree_model)                                 # prune decision tree model
 
 
-            pruned_predictions      = predict_dataset(validation_fold[:,:7], pruned_decision_tree_model)               # Predict using test fold
+            pruned_predictions      = predict_dataset(validation_fold[:, :7], pruned_decision_tree_model)               # Predict using test fold
             pruned_confusion_matrix = calculate_confusion_matrix(pruned_predictions, validation_fold[:, -1])           # Calculate confusion matrix
-            pruned_accuracy, pprecision, precall, pf1_score = calculate_evaluation_metrics(pruned_confusion_matrix)
+            pruned_accuracy, pruned_precision, pruned_recall, pruned_f1_score = calculate_evaluation_metrics(pruned_confusion_matrix)
 
             if(pruned_accuracy > best_valid_tree[1]):
                 best_valid_tree = (pruned_decision_tree_model, pruned_accuracy)
