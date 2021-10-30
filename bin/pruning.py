@@ -124,7 +124,6 @@ def prune_with_cross_validation(filepath):
     # Perform cross validation
     confusion_matrix_list = []
 
-
     for i, test_fold in enumerate(loaded_data):
 
         train_valid_folds = np.delete(loaded_data, i, axis = 0)                                  # Remove test fold from training/validation folds

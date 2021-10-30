@@ -17,19 +17,11 @@ Main python program accessible to the user and links all subprograms together
 
 if __name__ == "__main__":
 
-    unpruned_accuracies = []
-    pruned_accuracies = []
+    unpruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/noisy_dataset.txt")
 
-    for i in range(10):
-        average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/noisy_dataset.txt")
-        #print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix)
-        unpruned_accuracies.append(average_accuracy)
+    pruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = prune_with_cross_validation("./wifi_db/noisy_dataset.txt")
 
-        average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix = prune_with_cross_validation("./wifi_db/noisy_dataset.txt")
-        #print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix)
-        pruned_accuracies.append(average_accuracy)
-
-        print(i, numpy.mean(unpruned_accuracies), numpy.mean(pruned_accuracies))
+    print(unpruned_accuracies, pruned_accuracies)
 
 
     '''
