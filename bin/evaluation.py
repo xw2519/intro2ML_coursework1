@@ -77,6 +77,7 @@ def cross_validation(filepath,seed):
     
     # Perform cross validation 
     confusion_matrix_list = [] 
+    depth_list=[]
     for index, test_fold in enumerate(loaded_data):
         # Remove test fold from training fold
         training_folds = np.vstack(np.delete(loaded_data, index, axis = 0))
@@ -85,7 +86,7 @@ def cross_validation(filepath,seed):
         
         # Train decision tree model 
         decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)
-        
+        depth_list.append(max_depth)
         # Predict using test fold
         predictions = predict_dataset(test_fold, decision_tree_model)
         
@@ -93,6 +94,9 @@ def cross_validation(filepath,seed):
         confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))
         
     # Calculate and return cross validation results
+    average_depth=np.mean(np.array(depth_list))
+    print(average_depth,"average_depth")
+    print(depth_list,"depth list")
     accuracy_list = []
     precision_list = []
     recall_list = []

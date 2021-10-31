@@ -13,15 +13,17 @@ while tree is not pruned:
             prune and compare accuracy
 
 '''
-def prune_tree(training_set, validation_set, trained_tree):
+def prune_tree(training_set, validation_set, trained_tree, depth):
     # Store current path in tree.
     # Traverses tree without recursion and finding subsets of training set. Stores recently explored nodes.
     stack = []                
     current_node = trained_tree # current node of interest      
-    explored_nodes = []               
+    explored_nodes = []
+    cur_depth=0               
 
     while not ((stack == []) and (current_node['right'] in explored_nodes)):
         # If current node has 2 leaves, try prune the tree
+        
         if ((current_node['left']['leaf']) and (current_node['right']['leaf'])):  
             # Evaluate unpruned model metrics
             result = predict_dataset(validation_set[:, :7], trained_tree)                                    
@@ -65,7 +67,9 @@ def prune_tree(training_set, validation_set, trained_tree):
                 # Pruning reduced performance, undo the pruning and continue traversing tree
                 stack[-1][side] = current_node
             else:
-                # Pruning improved performance                                 
+                # Pruning improved performance
+                if cur_depth==depth:
+                    depth-=1                            
                 pass
 
             if current_node['left']  in explored_nodes: explored_nodes.remove(current_node['left'])
@@ -75,26 +79,33 @@ def prune_tree(training_set, validation_set, trained_tree):
         # If current node does NOT have 2 leaves, keep traversing tree
         else:                                                                    
             # Update explored nodes
-            if (current_node['left']['leaf']) and (current_node['left'] not in explored_nodes): explored_nodes.append(current_node['left'])
-            if (current_node['right']['leaf']) and (current_node['right'] not in explored_nodes): explored_nodes.append(current_node['right'])
+            if (current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):
+                cur_depth += 1 
+                explored_nodes.append(current_node['left'])
+            if (current_node['right']['leaf']) and (current_node['right'] not in explored_nodes): 
+                cur_depth += 1 
+                explored_nodes.append(current_node['right'])
 
             # If both connected nodes have been explored, go to parent node
-            if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):     
+            if (current_node['left'] in explored_nodes) and (current_node['right'] in explored_nodes):
+                cur_depth -= 1     
                 explored_nodes.remove(current_node['left'])
                 explored_nodes.remove(current_node['right'])
                 current_node = stack.pop()
             # Go to left node if it is not a leaf and has not been explored
-            elif (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):      
-               stack.append(current_node)
-               current_node = current_node['left']
+            elif (not current_node['left']['leaf']) and (current_node['left'] not in explored_nodes):
+                cur_depth += 1       
+                stack.append(current_node)
+                current_node = current_node['left']
             # Go to right node
-            else:                                                                                          
+            else:
+                cur_depth += 1                                                                                           
                 stack.append(current_node)
                 current_node = current_node['right']
 
         explored_nodes.append(current_node)
 
-    return trained_tree
+    return trained_tree, depth
 
 
 
@@ -125,12 +136,12 @@ def prune_with_cross_validation(filepath,seed):
 
     # Perform 10-fold nested cross validation
     confusion_matrix_list = []
-
+    pruned_depth_list=[]
     for i, test_fold in enumerate(loaded_data):
         # Remove test fold from training/validation folds
         train_valid_folds = np.delete(loaded_data, i, axis = 0)                                  
 
-        best_valid_tree = ({},0)
+        best_valid_tree = ({},0,0)
 
         for j, validation_fold in enumerate(train_valid_folds):
             training_folds   = np.vstack(np.delete(train_valid_folds, j, axis = 0))
@@ -141,22 +152,24 @@ def prune_with_cross_validation(filepath,seed):
             validation_labels =  validation_fold[:, -1]
 
             decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)    
-            pruned_decision_tree_model = prune_tree(training_folds, validation_fold, decision_tree_model)                                 
-
+            pruned_decision_tree_model, pruned_max_depth = prune_tree(training_folds, validation_fold, decision_tree_model, max_depth)                                 
             # Predict using validation fold
             pruned_predictions = predict_dataset(validation_dataset, pruned_decision_tree_model)               
             pruned_confusion_matrix = calculate_confusion_matrix(pruned_predictions, validation_labels)          
             pruned_accuracy, pruned_precision, pruned_recall, pruned_f1_score = calculate_evaluation_metrics(pruned_confusion_matrix)
 
             # Select the best model
-            if(pruned_accuracy > best_valid_tree[1]): best_valid_tree = (pruned_decision_tree_model, pruned_accuracy)
+            if(pruned_accuracy > best_valid_tree[1]): best_valid_tree = (pruned_decision_tree_model, pruned_accuracy,pruned_max_depth)
 
         # Evaluate performance of the best model selected with validation fold
         predictions = predict_dataset(test_fold, best_valid_tree[0])                                    
-
+        pruned_depth_list.append(best_valid_tree[2])
         confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))    
 
     # Calculate and return cross validation results
+    average_pruned_depth=np.mean(np.array(pruned_depth_list))
+    print(average_pruned_depth,"average_pruned_depth")
+    print(pruned_depth_list,"pruned_depth_list")
     accuracy_list = []
     precision_list = []
     recall_list = []
