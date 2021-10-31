@@ -17,9 +17,11 @@ Main python program accessible to the user and links all subprograms together
 
 if __name__ == "__main__":
 
-    unpruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/noisy_dataset.txt")
+    seed = int(input("Please choose the seed : "))
 
-    pruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = prune_with_cross_validation("./wifi_db/noisy_dataset.txt")
+    unpruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/noisy_dataset.txt",seed)
+
+    pruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = prune_with_cross_validation("./wifi_db/noisy_dataset.txt",seed)
 
     print(unpruned_accuracies, pruned_accuracies)
 

@@ -48,7 +48,7 @@ def calculate_evaluation_metrics(confusion_matrix):
     return accuracy, precision, recall, f_score
     
 
-def cross_validation(filepath):
+def cross_validation(filepath,seed):
     '''
     Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training set.
     
@@ -65,7 +65,10 @@ def cross_validation(filepath):
     '''
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
-    np.random.shuffle(loaded_data)
+    #np.random.shuffle(loaded_data)
+    rg = np.random.default_rng(seed)
+    shuffled_order = rg.permutation(len(loaded_data))
+    loaded_data = loaded_data[shuffled_order]
     
     # Create 10 folds
     loaded_data = loaded_data.reshape((10, -1, 8))

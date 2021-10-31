@@ -61,7 +61,7 @@ def prune_tree(training_set, validation_set, trained_tree):
             confusion_matrix = calculate_confusion_matrix(result, validation_set[:,7])
             pruned_accuracy, pruned_precision, pruned_recall, pruned_f_score = calculate_evaluation_metrics(confusion_matrix)
 
-            if pruned_accuracy <= unpruned_accuracy: 
+            if pruned_accuracy < unpruned_accuracy: 
                 # Pruning reduced performance, undo the pruning and continue traversing tree
                 stack[-1][side] = current_node
             else:
@@ -98,7 +98,7 @@ def prune_tree(training_set, validation_set, trained_tree):
 
 
 
-def prune_with_cross_validation(filepath):
+def prune_with_cross_validation(filepath,seed):
     '''
     Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training/validation set.
 
@@ -115,7 +115,10 @@ def prune_with_cross_validation(filepath):
     '''
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
-    np.random.shuffle(loaded_data)
+    #np.random.shuffle(loaded_data)
+    rg = np.random.default_rng(seed)
+    shuffled_order = rg.permutation(len(loaded_data))
+    loaded_data = loaded_data[shuffled_order]
 
     # Create 10 folds
     loaded_data = loaded_data.reshape((10, -1, 8))
