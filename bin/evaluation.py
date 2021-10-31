@@ -1,5 +1,7 @@
 from .decision_tree import create_decision_tree, predict_dataset
-import numpy as np    
+import numpy as np   
+
+np.seterr(invalid='ignore')
 
 '''
 evaluation.py

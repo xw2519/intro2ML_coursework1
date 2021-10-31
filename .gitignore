@@ -130,3 +130,5 @@ dmypy.json
 decision_tree_model.jpg
 decistion_tree.png
 output.txt
+output/confusion_matrix.jpg
+output/cross_validation_results.txt
