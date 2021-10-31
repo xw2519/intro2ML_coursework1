@@ -1,4 +1,4 @@
-from matplotlib import cm, colors
+from matplotlib import colors
 
 import numpy as np
 import matplotlib.pyplot as matplot
