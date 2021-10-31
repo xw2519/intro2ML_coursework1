@@ -19,11 +19,24 @@ if __name__ == "__main__":
 
     seed = int(input("Please choose the seed : "))
 
-    unpruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/noisy_dataset.txt",seed)
-
-    pruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = prune_with_cross_validation("./wifi_db/noisy_dataset.txt",seed)
-
-    print(unpruned_accuracies, pruned_accuracies)
+    unpruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix = cross_validation("./wifi_db/clean_dataset.txt",seed)
+    print("Unpruned tree ----------------------------------------------------------- ")
+    print("accuracy : ", unpruned_accuracies)
+    print("precision per class : ", average_precision)
+    print("recall per class : ", average_recall)
+    print("f1_score : ", average_f1_score)
+    print("confusion_matrix : ")
+    print(average_confusion_matrix)
+    #print(unpruned_accuracies, average_precision, average_recall, average_f1_score, average_confusion_matrix)
+    pruned_accuracies, pruned_average_precision, pruned_average_recall, pruned_average_f1_score, pruned_average_confusion_matrix = prune_with_cross_validation("./wifi_db/clean_dataset.txt",seed)
+    print("Pruned tree ----------------------------------------------------------- ")
+    print("accuracy : ", pruned_accuracies)
+    print("precision per class : ", pruned_average_precision)
+    print("recall per class : ", pruned_average_recall)
+    print("f1_score : ", pruned_average_f1_score)
+    print("confusion_matrix : ")
+    print(pruned_average_confusion_matrix)
+    #print(unpruned_accuracies, pruned_accuracies)
 
 
     '''
