@@ -12,7 +12,7 @@ tree_depth = 0
 width = [0,0,0,0,0]
 
 # Decision tree functions
-def create_decision_tree(training_dataset, label, tree_depth):
+def create_decision_tree(training_dataset, label, tree_depth=0):
     '''
     Given a training dataset, labels and initial tree depth, create the decision tree
     

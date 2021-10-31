@@ -16,10 +16,11 @@ def createPlot(decision_tree,max_depth,filename):
     def plotTree(decision_tree,max_depth,cur_depth,parentPt,left):
         # left = -1.0, left branch, right =1.0, right branch 
         #param=max_depth-cur_depth #for plotting whole picture
-        width=0.01
+        width=0.05
+        
         if max_depth>=8:
             param=max_depth-cur_depth-7
-        else: 
+        else:   
             param=max_depth-cur_depth
         change_height=0.5
         curPt=parentPt[0]+left*width*pow(2,param)/4,parentPt[1]-change_height
