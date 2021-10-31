@@ -134,7 +134,9 @@ def prune_with_cross_validation(filepath,seed):
     pruned_depth_list=[]
     for i, test_fold in enumerate(loaded_data):
         # Remove test fold from training/validation folds
-        train_valid_folds = np.delete(loaded_data, i, axis = 0)
+        train_valid_folds = np.vstack(np.delete(loaded_data, i, axis = 0))
+        # Divide training/validation sets into 10 folds
+        train_valid_folds = train_valid_folds.reshape((10, -1, 8))
 
         best_valid_tree = ({},0,0)
 
