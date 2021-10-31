@@ -163,8 +163,8 @@ def prune_with_cross_validation(filepath,seed):
 
     # Calculate and return cross validation results
     average_pruned_depth=np.mean(np.array(pruned_depth_list))
-    print(average_pruned_depth,"average_pruned_depth")
-    print(pruned_depth_list,"pruned_depth_list")
+    print("average_pruned_depth : ", average_pruned_depth)
+    print("pruned_depth_list : ", pruned_depth_list)
     accuracy_list = []
     precision_list = []
     recall_list = []

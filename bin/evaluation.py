@@ -95,8 +95,8 @@ def cross_validation(filepath,seed):
         
     # Calculate and return cross validation results
     average_depth=np.mean(np.array(depth_list))
-    print(average_depth,"average_depth")
-    print(depth_list,"depth list")
+    print("average_depth : ", average_depth)
+    print("depth list : ", depth_list)
     accuracy_list = []
     precision_list = []
     recall_list = []
