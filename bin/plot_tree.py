@@ -19,7 +19,7 @@ def createPlot(decision_tree,max_depth,filename):
         width=0.05
         
         if max_depth>=8:
-            param=max_depth-cur_depth-7
+            param=max_depth-cur_depth-5
         else:   
             param=max_depth-cur_depth
         change_height=0.5
