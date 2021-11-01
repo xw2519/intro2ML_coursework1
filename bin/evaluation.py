@@ -86,7 +86,7 @@ def cross_validation(filepath,seed):
         
         # Train decision tree model 
         decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)
-        depth_list.append(max_depth)
+        depth_list.append(max_depth+1)
         # Predict using test fold
         predictions = predict_dataset(test_fold, decision_tree_model)
         
