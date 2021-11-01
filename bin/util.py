@@ -133,6 +133,15 @@ arrow_args = dict(arrowstyle="<-")
 
 
 def plot_decision_tree(decision_tree, width):
+    '''
+    Plot a given decision tree model using matplotlib. Saves the figure to output/'decision_tree_model.jpg'.
+    
+    Parameters:
+    - decision_tree: Decision tree model to be plotted 
+    - width: Width of the decision tree model
+    
+    Return: None
+    '''
     def traverse_decision_tree(decision_tree, width, record, cur_depth, parentPt, left):
         cur_num = record[cur_depth]
         max_width=np.max(width)*0.2/2
@@ -241,6 +250,8 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
     - precision: Number of correctly classified positive divided by the total number of predicted positive 
     - recall: Number of correctly classified positive divided by the total number of positive
     - f_score: Performance measure of the classifier
+    - prune_metrics: Flag checking if the metrics are for pruning and required two entries into output file
+    - keep_previous_metrics: Flag differentiating between unpruned and pruned cross validation metric
     
     Return: None
     '''

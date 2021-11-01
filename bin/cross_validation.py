@@ -1,4 +1,0 @@
-'''
-cross_validation.py
-
-'''

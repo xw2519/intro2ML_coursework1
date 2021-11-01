@@ -1,19 +1,35 @@
 from bin.decision_tree import create_decision_tree, predict_dataset
-from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics, cross_validation
+from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics
 
 import numpy as np
 import collections
 
 '''
-the tree is pruned if a full iteration of the while loop completes without removing nodes
+pruning.py
 
-while tree is not pruned:
-    for every node in tree:
-        if node is connected to two leaves:
+Contains all the punring functions of the program. The tree is considered pruned if a full iteration of the while loop is completed without removing any nodes.
+
+Basic logic:
+
+WHILE tree is not pruned:
+    FOR every node in tree:
+        IF node is connected to two leaves:
             prune and compare accuracy
-
 '''
+
 def prune_tree(training_set, validation_set, trained_tree):
+    '''
+    Traverses the tree, finds any nodes that can be pruned and prunes the node before comparing the performance metrics.
+
+    Parameters:
+    - training_set: Training dataset
+    - validation_set: Validation dataset for evaluating the performance of a particular tree model
+    - trained_tree: Decision tree model
+
+    Return:
+    - trained_tree: The new pruned tree model
+    - max_depth: Max depth of the current pruned decision tree model
+    '''
     # Store current path in tree.
     # Traverses tree without recursion and finding subsets of training set. Stores recently explored nodes.
     stack = []
@@ -35,14 +51,14 @@ def prune_tree(training_set, validation_set, trained_tree):
             for i in range(len(stack)):
                 if i < len(stack)-1:
                     if (stack[i]['left'] == stack[i+1]):
-                        search_set = search_set[ search_set[:,stack[i]['attribute']] <= stack[i]['value'] ]
+                        search_set = search_set[ search_set[:, stack[i]['attribute']] <= stack[i]['value'] ]
                     else:
-                        search_set = search_set[ search_set[:,stack[i]['attribute']] >  stack[i]['value'] ]
+                        search_set = search_set[ search_set[:, stack[i]['attribute']] >  stack[i]['value'] ]
                 else:
                     if (stack[i]['left'] == current_node):
-                        search_set = search_set[ search_set[:,stack[i]['attribute']] <= stack[i]['value'] ]
+                        search_set = search_set[ search_set[:, stack[i]['attribute']] <= stack[i]['value'] ]
                     else:
-                        search_set = search_set[ search_set[:,stack[i]['attribute']] >  stack[i]['value'] ]
+                        search_set = search_set[ search_set[:, stack[i]['attribute']] >  stack[i]['value'] ]
 
             # Get most common label from this subset of the training set
             value = collections.Counter(search_set[:, 7]).most_common(1)[0][0]
@@ -104,7 +120,7 @@ def prune_tree(training_set, validation_set, trained_tree):
 
 
 
-def prune_with_cross_validation(filepath,seed):
+def prune_with_cross_validation(filepath, seed):
     '''
     Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training/validation set.
 
@@ -112,6 +128,7 @@ def prune_with_cross_validation(filepath,seed):
 
     Parameters:
     - filepath: File path to the dataset
+    - seed: Random seed for the 'default_rng' function
 
     Return:
     - average_accuracy: Number of correctly classified examples divided by the total number of examples
@@ -121,7 +138,6 @@ def prune_with_cross_validation(filepath,seed):
     '''
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
-    #np.random.shuffle(loaded_data)
     rg = np.random.default_rng(seed)
     shuffled_order = rg.permutation(len(loaded_data))
     loaded_data = loaded_data[shuffled_order]
@@ -138,7 +154,7 @@ def prune_with_cross_validation(filepath,seed):
         # Divide training/validation sets into 10 folds
         train_valid_folds = train_valid_folds.reshape((10, -1, 8))
 
-        best_valid_tree = ({},0,0)
+        best_valid_tree = ({}, 0, 0)
 
         for j, validation_fold in enumerate(train_valid_folds):
             training_folds   = np.vstack(np.delete(train_valid_folds, j, axis = 0))
@@ -164,9 +180,9 @@ def prune_with_cross_validation(filepath,seed):
         confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))
 
     # Calculate and return cross validation results
-    average_pruned_depth=np.mean(np.array(pruned_depth_list))
-    print("average_pruned_depth : ", average_pruned_depth)
-    print("pruned_depth_list : ", pruned_depth_list)
+    average_pruned_depth = np.mean(np.array(pruned_depth_list))
+    print("Average_pruned_depth: ", average_pruned_depth)
+    print("Pruned_depth_list: ", pruned_depth_list)
     accuracy_list = []
     precision_list = []
     recall_list = []
@@ -182,10 +198,10 @@ def prune_with_cross_validation(filepath,seed):
         f1_score_list.append(f1_score)
         confusion_matrix_sum += confusion_matrix_list[i]
 
-    average_accuracy = np.mean(np.array(accuracy_list), axis=0)
-    average_precision = np.mean(np.array(precision_list), axis=0)
-    average_recall = np.mean(np.array(recall_list), axis=0)
-    average_f1_score = np.mean(np.array(f1_score_list), axis=0)
+    average_accuracy = np.mean(np.array(accuracy_list), axis = 0)
+    average_precision = np.mean(np.array(precision_list), axis = 0)
+    average_recall = np.mean(np.array(recall_list), axis = 0)
+    average_f1_score = np.mean(np.array(f1_score_list), axis = 0)
     average_confusion_matrix = confusion_matrix_sum / 10
 
     return average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix
