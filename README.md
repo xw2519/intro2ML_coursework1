@@ -5,6 +5,7 @@ A Python implementation of a decision tree algorithm that can determine one of t
 Contents
 ========
  * [Contributors](#contributors)
+ * [Features](#features)
  * [Usage](#usage)
 
 ### Contributors
@@ -14,6 +15,12 @@ Contents
 - Sijun You [CID: 01747112]
 - Xin Wang [CID: 01735352]
 
+### Features
+
+- The program saves all plots of decision trees and confusion matrices in the [output](output) folder.
+- All evaluation metrics are saved to the the [output](output) folder.
+- Random seed is required to be specified by the user. This is done in order to allow the user to replicate a result if the random seed is known.
+
 ### Usage
 To start the interactive program, run the Python file: [app.py](app.py). 
 
@@ -22,6 +29,7 @@ To start the interactive program, run the Python file: [app.py](app.py).
 - The user will be prompt to enter the full file path to a dataset e.g. `datasets\clean_dataset.txt` for training and testing the decision tree.
 - All the features of the program will be numbered and listed to the user to choose from. The user is expected to enter the number corresponding to the desired function.
 - The program will execute the selected function and save all program output to the [output](output) folder. 
+- The random seed needs to be specified if the user is performing `2: 10-fold cross validation` or `3: Nested 10-fold cross validation with post-pruning`.
 
 An example output of program usage:
 ```
@@ -38,6 +46,8 @@ Choice: 2
 
 -------------------- Program execution log --------------------
 2: 10-fold cross validation
+
+Please choose the random seed: 56
 
 Loading dataset from: wifi_db\clean_dataset.txt
 
