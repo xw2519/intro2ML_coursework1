@@ -30,7 +30,7 @@ def read_and_shuffle_dataset(filepath):
     return dataset, labels  
  
     
-def find_split(dataset: np.ndarray, label: np.ndarray):
+def find_split(dataset, label):
     '''
     Given a dataset instance and labels, choose the attribute and the value that results in the highest information gain
     

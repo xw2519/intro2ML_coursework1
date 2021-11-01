@@ -49,7 +49,7 @@ Choice: 2
 
 Please choose the random seed: 56
 
-Loading dataset from: wifi_db\clean_dataset.txt
+Loading dataset from: .\wifi_db\clean_dataset.txt
 
 --------- Cross Validation Metrics ---------
 Average Confusion Matrix:
