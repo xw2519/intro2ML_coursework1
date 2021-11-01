@@ -3,6 +3,7 @@ import numpy as np
 
 np.seterr(invalid='ignore')
 
+
 '''
 evaluation.py
     
@@ -49,7 +50,6 @@ def calculate_evaluation_metrics(confusion_matrix):
     
     return accuracy, precision, recall, f_score
     
-
 def cross_validation(filepath,seed):
     '''
     Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training set.

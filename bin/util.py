@@ -1,4 +1,4 @@
-from matplotlib import cm, colors
+from matplotlib import colors
 
 import numpy as np
 import matplotlib.pyplot as matplot
@@ -178,7 +178,7 @@ def plot_decision_tree(decision_tree, width):
     traverse_decision_tree(decision_tree["left"], np.array(width), record, 1, parentPt, -1.0)
     traverse_decision_tree(decision_tree["right"], np.array(width), record, 1, parentPt, 1.0)
     
-    matplot.savefig('decision_tree_model.jpg', bbox_inches = 'tight')
+    matplot.savefig('output/decision_tree_model.jpg', bbox_inches = 'tight')
 
 
 def plot_confusion_matrix(confusion_matrix):
@@ -209,8 +209,8 @@ def plot_confusion_matrix(confusion_matrix):
 
     for i in range(4):
         for j in range(4): axis.text(i, j, np.round(confusion_matrix[i][j], 4), ha = "center", va = "center", color = 'black')
-            
-    matplot.show()
+    
+    matplot.savefig('output/confusion_matrix.jpg', bbox_inches = 'tight')
 
 
 def print_evaluation_metrics(accuracy, precision, recall, f_score):
@@ -254,3 +254,20 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
     print('Average Recall:              ', average_recall)
     print('Average F1 Score:            ', average_f_score)
     print()
+    print("Saving cross validation result to 'output/cross_validation_results.txt'")    
+    output_file = open('output/cross_validation_results.txt', 'w')
+    print('--------- Cross Validation Metrics ---------', file = output_file)    
+    print('Average Confusion Matrix:', file = output_file)
+    print(average_confusion_matrix, file = output_file)
+    print('', file = output_file)
+    print('Average Accuracy:             ', average_accuracy, file = output_file)
+    print('Average Precision:           ', average_precision, file = output_file)
+    print('Average Recall:              ', average_recall, file = output_file)
+    print('Average F1 Score:            ', average_f_score, file = output_file)
+    output_file.close()
+    
+    
+    
+    # Change output into a list and redirect output into a variable before passing that into a iterator to store into a file 
+        
+    return
