@@ -7,7 +7,8 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 from bin.decision_tree import create_decision_tree, width
 from bin.evaluation import cross_validation
-from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix, print_evaluation_metrics, print_cross_validation_metrics
+from bin.util import read_and_shuffle_dataset, plot_confusion_matrix, print_evaluation_metrics, print_cross_validation_metrics
+from bin.plot_tree import plot_decision_tree, plot_decision_tree_v2
 
 import numpy as np
 
@@ -39,10 +40,11 @@ if __name__ == "__main__":
             print()
             print("Loading dataset from: ", filepath)
             training_set, training_label = read_and_shuffle_dataset(filepath)
-            print("Plotting decision tree")
+            #print("Plotting decision tree")
             decision_tree_model, max_tree_depth = create_decision_tree(training_dataset = training_set, label = training_label, tree_depth = 0)  
-            plot_decision_tree(decision_tree_model, width)
-            print("Plotting completed. Plot saved to 'output/decision_tree_model.jpg'")
+            plot_decision_tree(decision_tree_model, max_tree_depth,'./output/decision_tree_model.jpg')
+            plot_decision_tree_v2(decision_tree_model, width,'./output/decision_tree_model_v2.jpg')
+            #print("Plotting completed. Plot saved to 'output/decision_tree_model.jpg'")
             print() 
             input("To select other functions, press 'Enter'")
         
