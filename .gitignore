@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+output/confusion_matrix.jpg
+.gitignore
+output/decision_tree_model.jpg
+output/cross_validation_results.txt
