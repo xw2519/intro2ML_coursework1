@@ -35,7 +35,7 @@ An example output of program usage:
 ```
 (.env) PS user> python3 app.py
 
-Input path to dataset: wifi_db/clean_dataset.txt
+Input path to dataset: /wifi_db/clean_dataset.txt
 
 Program functions: [Please enter the corresponding number]
  1: Plot Decision Tree
