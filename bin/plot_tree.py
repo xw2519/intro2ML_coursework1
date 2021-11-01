@@ -7,7 +7,7 @@ arrow_args = dict(arrowstyle="<-")
 
 def plotNode(nodeTxt,parentPt,centerPt,nodeType):
     # plot a single node or leaf with array
-    createPlot.ax1.annotate(nodeTxt, xy=parentPt, \
+    plot_decision_tree.ax1.annotate(nodeTxt, xy=parentPt, \
     xycoords='axes fraction',
     xytext=centerPt, textcoords='axes fraction',\
     va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
@@ -25,6 +25,12 @@ def plot_decision_tree(decision_tree,max_depth,filename):
     
     Return: None
     '''
+    def plotNode(nodeTxt,parentPt,centerPt,nodeType):
+        # plot a single node or leaf with array
+        plot_decision_tree.ax1.annotate(nodeTxt, xy=parentPt, \
+        xycoords='axes fraction',
+        xytext=centerPt, textcoords='axes fraction',\
+        va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
 
     def plotTree(decision_tree,max_depth,cur_depth,parentPt,left):
         # left = -1.0 means left branch, left = 1.0 means right branch 
@@ -45,12 +51,12 @@ def plot_decision_tree(decision_tree,max_depth,filename):
             plotTree(decision_tree["right"],max_depth,cur_depth+1,curPt,1.0)
 
     # Draw a plot depending on depth
-    print("Plotting the tree v1 ...")
+    print("Plotting decision tree using depth ...")
     fig = plt.figure(1,facecolor='white')
     fig.clf()
-    createPlot.ax1 = plt.subplot(111,frameon=False,xticks=[], yticks=[])
+    plot_decision_tree.ax1 = plt.subplot(111,frameon=False,xticks=[], yticks=[])
     message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
-    createPlot.ax1.annotate(message,xy=(0,1),xytext=(0,1),va="center",ha="center",bbox=node)
+    plot_decision_tree.ax1.annotate(message,xy=(0,1),xytext=(0,1),va="center",ha="center",bbox=node)
     parentPt=(0,1)
     plotTree(decision_tree["left"],max_depth,1,parentPt,-1.0)
     plotTree(decision_tree["right"],max_depth,1,parentPt,1.0)
@@ -72,6 +78,13 @@ def plot_decision_tree_v2(decision_tree,width,filename):
     
     Return: None
     '''
+    def plotNode(nodeTxt,parentPt,centerPt,nodeType):
+        # plot a single node or leaf with array
+        plot_decision_tree_v2.ax1.annotate(nodeTxt, xy=parentPt, \
+        xycoords='axes fraction',
+        xytext=centerPt, textcoords='axes fraction',\
+        va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
+
     def plotTree2(decision_tree,width,record,cur_depth,parentPt):
         # A recursive function 
         cur_num = record[cur_depth]
@@ -92,17 +105,17 @@ def plot_decision_tree_v2(decision_tree,width,filename):
         else:
             message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
             plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
-            plotTree(decision_tree["left"],width,record,cur_depth+1,curPt)
-            plotTree(decision_tree["right"],width,record,cur_depth+1,curPt)
+            plotTree2(decision_tree["left"],width,record,cur_depth+1,curPt)
+            plotTree2(decision_tree["right"],width,record,cur_depth+1,curPt)
 
 
     # Draw a plot depending on maximum width
-    print("Plotting the tree v2 ...")
+    print("Plotting decision tree v2 using width ...")
     fig = plt.figure(1,facecolor='white')
     fig.clf()
-    createPlot.ax1 = plt.subplot(111,frameon=False,xticks=[], yticks=[])
+    plot_decision_tree_v2.ax1 = plt.subplot(111,frameon=False,xticks=[], yticks=[])
     message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
-    createPlot.ax1.annotate(message,xy=(0,1),xytext=(0,1),va="center",ha="center",bbox=node)
+    plot_decision_tree_v2.ax1.annotate(message,xy=(0,1),xytext=(0,1),va="center",ha="center",bbox=node)
     max_width=np.max(np.array(width))*0.12
     record=np.zeros((len(width),))
     parentPt=(0,1)
