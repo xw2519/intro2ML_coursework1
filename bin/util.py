@@ -172,7 +172,6 @@ def plot_decision_tree(decision_tree, width):
     message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
     plot_decision_tree.ax1.annotate(message, xy = (0,1), xytext = (0,1), va = "center", ha = "center", bbox = node)
 
-    max_width = np.max(np.array(width))*0.12
     record = np.zeros((len(width),))
     parentPt = (0,1)
     traverse_decision_tree(decision_tree["left"], np.array(width), record, 1, parentPt, -1.0)
@@ -233,7 +232,7 @@ def print_evaluation_metrics(accuracy, precision, recall, f_score):
     print()
 
 
-def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score, average_confusion_matrix):
+def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score, average_confusion_matrix, prune_metrics = False, keep_previous_metrics = False):
     '''
     Prints the evaluation metrics of a testset
     
@@ -245,7 +244,7 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
     
     Return: None
     '''
-    print('--------- Cross Validation Metrics ---------')    
+    print("---------------------------------------- Cross Validation Metrics ----------------------------------------------")  
     print('Average Confusion Matrix:')
     print(average_confusion_matrix)
     print()
@@ -254,20 +253,50 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
     print('Average Recall:              ', average_recall)
     print('Average F1 Score:            ', average_f_score)
     print()
-    print("Saving cross validation result to 'output/cross_validation_results.txt'")    
-    output_file = open('output/cross_validation_results.txt', 'w')
-    print('--------- Cross Validation Metrics ---------', file = output_file)    
-    print('Average Confusion Matrix:', file = output_file)
-    print(average_confusion_matrix, file = output_file)
-    print('', file = output_file)
-    print('Average Accuracy:             ', average_accuracy, file = output_file)
-    print('Average Precision:           ', average_precision, file = output_file)
-    print('Average Recall:              ', average_recall, file = output_file)
-    print('Average F1 Score:            ', average_f_score, file = output_file)
-    output_file.close()
     
+    # Save results to output file
+    print("Saving cross validation result to 'output/cross_validation_results.txt'")
     
-    
-    # Change output into a list and redirect output into a variable before passing that into a iterator to store into a file 
+    # Print standard cross validation metrics
+    if not prune_metrics:
+        output_file = open('output/cross_validation_results.txt', 'w')
+        print('---------------------------------------- Cross Validation Metrics ----------------------------------------------', file = output_file)    
+        print('Average Confusion Matrix:', file = output_file)
+        print(average_confusion_matrix, file = output_file)
+        print('', file = output_file)
+        print('Average Accuracy:             ', average_accuracy, file = output_file)
+        print('Average Precision:           ', average_precision, file = output_file)
+        print('Average Recall:              ', average_recall, file = output_file)
+        print('Average F1 Score:            ', average_f_score, file = output_file)
+        print()
+        output_file.close()
         
+    # Print pruning metrics
+    else: 
+        if not keep_previous_metrics: 
+            output_file = open('output/cross_validation_results.txt', 'w')
+            print('----------------------------------- Unpruned Cross Validation Metrics ------------------------------------------', file = output_file)   
+            print('Average Confusion Matrix:', file = output_file)
+            print(average_confusion_matrix, file = output_file)
+            print('', file = output_file)
+            print('Average Accuracy:             ', average_accuracy, file = output_file)
+            print('Average Precision:           ', average_precision, file = output_file)
+            print('Average Recall:              ', average_recall, file = output_file)
+            print('Average F1 Score:            ', average_f_score, file = output_file)
+            print()
+            output_file.close()
+            
+        else: 
+            output_file = open('output/cross_validation_results.txt', 'a')
+            print('------------------------------------ Pruned Cross Validation Metrics -------------------------------------------', file = output_file)    
+            print('Average Confusion Matrix:', file = output_file)
+            print(average_confusion_matrix, file = output_file)
+            print('', file = output_file)
+            print('Average Accuracy:             ', average_accuracy, file = output_file)
+            print('Average Precision:           ', average_precision, file = output_file)
+            print('Average Recall:              ', average_recall, file = output_file)
+            print('Average F1 Score:            ', average_f_score, file = output_file)
+            print()
+            output_file.close()
+    
     return
