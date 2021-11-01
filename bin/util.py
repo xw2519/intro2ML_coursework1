@@ -126,69 +126,6 @@ def find_split(dataset: np.ndarray, label: np.ndarray):
 
     return node_attribute, value, int(cut_point)
 
-
-# Define style and colour of node and arrow
-node = dict(boxstyle = "round4", fc = "0.8")
-arrow_args = dict(arrowstyle="<-")
-
-
-def plot_decision_tree(decision_tree, width):
-    '''
-    Plot a given decision tree model using matplotlib. Saves the figure to output/'decision_tree_model.jpg'.
-    
-    Parameters:
-    - decision_tree: Decision tree model to be plotted 
-    - width: Width of the decision tree model
-    
-    Return: None
-    '''
-    def traverse_decision_tree(decision_tree, width, record, cur_depth, parentPt, left):
-        cur_num = record[cur_depth]
-        max_width=np.max(width)*0.2/2
-        node_num = width[cur_depth]
-        step=max_width*2/(node_num)
-        record[cur_depth]+=1
-
-        change_height=0.3
-        curPt=-max_width+step*cur_num,parentPt[1]-change_height
-        if decision_tree["leaf"]==True:
-            message='leaf:'+str(decision_tree["class"])
-            plot_node(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
-        else:
-            message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
-            plot_node(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
-            traverse_decision_tree(decision_tree["left"], width, record, cur_depth + 1, curPt, -1.0)
-            traverse_decision_tree(decision_tree["right"], width, record, cur_depth + 1, curPt, 1.0)
-    
-    def plot_node(nodeTxt, parentPt, centerPt, nodeType):
-        plot_decision_tree.ax1.annotate(
-            nodeTxt, 
-            xy = parentPt,
-            xycoords = 'axes fraction',
-            xytext = centerPt, 
-            textcoords = 'axes fraction',
-            va = "center",
-            ha = "center", 
-            bbox = nodeType, 
-            arrowprops = arrow_args
-        )
-        
-    fig = matplot.figure(1, facecolor = 'white')
-    fig.clf()
-    
-    plot_decision_tree.ax1 = matplot.subplot(111, frameon = False, xticks = [], yticks = [])
-    
-    message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
-    plot_decision_tree.ax1.annotate(message, xy = (0,1), xytext = (0,1), va = "center", ha = "center", bbox = node)
-
-    record = np.zeros((len(width),))
-    parentPt = (0,1)
-    traverse_decision_tree(decision_tree["left"], np.array(width), record, 1, parentPt, -1.0)
-    traverse_decision_tree(decision_tree["right"], np.array(width), record, 1, parentPt, 1.0)
-    
-    matplot.savefig('output/decision_tree_model.jpg', bbox_inches = 'tight')
-
-
 def plot_confusion_matrix(confusion_matrix):
     '''
     Given a 'confusion_matrix', plot and show the confusion matrix using matplotlib

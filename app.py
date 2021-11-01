@@ -7,7 +7,8 @@ numpy.set_printoptions(threshold=sys.maxsize)
 
 from bin.decision_tree import create_decision_tree, width
 from bin.evaluation import cross_validation
-from bin.util import read_and_shuffle_dataset, plot_decision_tree, plot_confusion_matrix, print_evaluation_metrics, print_cross_validation_metrics
+from bin.util import read_and_shuffle_dataset, plot_confusion_matrix, print_evaluation_metrics, print_cross_validation_metrics
+from bin.plot_tree import plot_decision_tree, plot_decision_tree_v2
 
 import numpy as np
 
