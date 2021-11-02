@@ -126,6 +126,7 @@ def find_split(dataset, label):
 
     return node_attribute, value, int(cut_point)
 
+
 def plot_confusion_matrix(confusion_matrix):
     '''
     Given a 'confusion_matrix', plot and show the confusion matrix using matplotlib
@@ -178,12 +179,13 @@ def print_evaluation_metrics(accuracy, precision, recall, f_score):
     print()
 
 
-def print_cross_validation_metrics(average_accuracy, average_precision, average_recall, average_f_score, average_confusion_matrix, prune_metrics = False, keep_previous_metrics = False):
+def print_cross_validation_metrics(average_accuracy, accuracy_standard_deviation, average_precision, average_recall, average_f_score, average_confusion_matrix, prune_metrics = False, keep_previous_metrics = False):
     '''
     Prints the evaluation metrics of a testset
     
     Parameters:
     - accuracy: Number of correctly classified examples divided by the total number of examples
+    - accuracy_standard_deviation: Standard deviation of accuracy
     - precision: Number of correctly classified positive divided by the total number of predicted positive 
     - recall: Number of correctly classified positive divided by the total number of positive
     - f_score: Performance measure of the classifier
@@ -194,12 +196,13 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
     '''
     print("---------------------------------------- Cross Validation Metrics ----------------------------------------------")  
     print('Average Confusion Matrix:')
-    print(average_confusion_matrix)
+    print(np.round(average_confusion_matrix.astype(np.float), 2))
     print()
-    print('Average Accuracy:             ', average_accuracy)
-    print('Average Precision:           ', average_precision)
-    print('Average Recall:              ', average_recall)
-    print('Average F1 Score:            ', average_f_score)
+    print('Average Accuracy:             ', np.round(average_accuracy, 2))
+    print('Accuracy Standard Deviation:  ', np.round(accuracy_standard_deviation, 5))
+    print('Average Precision:           ', np.round(average_precision, 2))
+    print('Average Recall:              ', np.round(average_recall, 2))
+    print('Average F1 Score:            ', np.round(average_f_score, 2))
     print()
     
     # Save results to output file
@@ -210,9 +213,10 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
         output_file = open('output/cross_validation_results.txt', 'w')
         print('---------------------------------------- Cross Validation Metrics ----------------------------------------------', file = output_file)    
         print('Average Confusion Matrix:', file = output_file)
-        print(average_confusion_matrix, file = output_file)
+        print(np.round(average_confusion_matrix.astype(np.float), 2), file = output_file)
         print('', file = output_file)
         print('Average Accuracy:             ', average_accuracy, file = output_file)
+        print('Accuracy Standard Deviation:  ', accuracy_standard_deviation, file = output_file)
         print('Average Precision:           ', average_precision, file = output_file)
         print('Average Recall:              ', average_recall, file = output_file)
         print('Average F1 Score:            ', average_f_score, file = output_file)
@@ -225,26 +229,151 @@ def print_cross_validation_metrics(average_accuracy, average_precision, average_
             output_file = open('output/cross_validation_results.txt', 'w')
             print('----------------------------------- Unpruned Cross Validation Metrics ------------------------------------------', file = output_file)   
             print('Average Confusion Matrix:', file = output_file)
-            print(average_confusion_matrix, file = output_file)
+            print(np.round(average_confusion_matrix.astype(np.float), 2), file = output_file)
             print('', file = output_file)
             print('Average Accuracy:             ', average_accuracy, file = output_file)
+            print('Accuracy Standard Deviation:  ', accuracy_standard_deviation, file = output_file)
             print('Average Precision:           ', average_precision, file = output_file)
             print('Average Recall:              ', average_recall, file = output_file)
             print('Average F1 Score:            ', average_f_score, file = output_file)
-            print()
+            print(file = output_file)
             output_file.close()
             
         else: 
             output_file = open('output/cross_validation_results.txt', 'a')
             print('------------------------------------ Pruned Cross Validation Metrics -------------------------------------------', file = output_file)    
             print('Average Confusion Matrix:', file = output_file)
-            print(average_confusion_matrix, file = output_file)
+            print(np.round(average_confusion_matrix.astype(np.float), 2), file = output_file)
             print('', file = output_file)
             print('Average Accuracy:             ', average_accuracy, file = output_file)
+            print('Accuracy Standard Deviation:  ', accuracy_standard_deviation, file = output_file)
             print('Average Precision:           ', average_precision, file = output_file)
             print('Average Recall:              ', average_recall, file = output_file)
             print('Average F1 Score:            ', average_f_score, file = output_file)
-            print()
+            print(file = output_file)
             output_file.close()
     
     return
+
+
+#define style and colour of the node and arrow
+node = dict(boxstyle="round4",fc="0.8")
+arrow_args = dict(arrowstyle="<-")
+
+def plotNode(nodeTxt,parentPt,centerPt,nodeType):
+    # plot a single node or leaf with array
+    plot_decision_tree.ax1.annotate(nodeTxt, xy=parentPt, \
+    xycoords='axes fraction',
+    xytext=centerPt, textcoords='axes fraction',\
+    va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
+
+
+def plot_decision_tree(decision_tree,max_depth,filename):
+    '''
+    Given a decision tree and its maximum depth,
+    Plot the tree depends on its maximum depth using matplotlib
+    Finally save the picture into a jpg with the given name as filename
+        
+    Parameters:
+    - decision_tree: a dictionary containing all the tree nodes and leaves
+    - max_depth: an int, presenting the maximum depth of the decision tree
+    - filename: a string, the name of the file which the final image will save to, e.g. 'tree1.jpg'
+    
+    Return: None
+    '''
+    def plotNode(nodeTxt,parentPt,centerPt,nodeType):
+        # plot a single node or leaf with array
+        plot_decision_tree.ax1.annotate(nodeTxt, xy=parentPt, \
+        xycoords='axes fraction',
+        xytext=centerPt, textcoords='axes fraction',\
+        va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
+
+    def plotTree(decision_tree,max_depth,cur_depth,parentPt,left):
+        # left = -1.0 means left branch, left = 1.0 means right branch 
+        width=0.01
+        if max_depth>=6:
+            param=max_depth-cur_depth-5
+        else:   
+            param=max_depth-cur_depth
+        change_height=0.5
+        curPt=parentPt[0]+left*width*pow(2,param)/4,parentPt[1]-change_height
+        if decision_tree["leaf"]==True:
+            message='leaf:'+str(decision_tree["class"])
+            plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
+        else:
+            message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
+            plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
+            plotTree(decision_tree["left"],max_depth,cur_depth+1,curPt,-1.0)
+            plotTree(decision_tree["right"],max_depth,cur_depth+1,curPt,1.0)
+
+    # Draw a plot depending on depth
+    print("Plotting decision tree using depth ...")
+    fig = matplot.figure(1,facecolor='white')
+    fig.clf()
+    plot_decision_tree.ax1 = matplot.subplot(111,frameon=False,xticks=[], yticks=[])
+    message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
+    plot_decision_tree.ax1.annotate(message, xy=(0,1), xytext=(0,1), va="center", ha="center", bbox=node)
+    parentPt = (0,1)
+    plotTree(decision_tree["left"], max_depth, 1, parentPt, -1.0)
+    plotTree(decision_tree["right"], max_depth, 1, parentPt, 1.0)
+
+    matplot.savefig(filename, bbox_inches = 'tight')
+    print("Plotting completed. Plot saved to ", filename)
+
+
+def plot_decision_tree_v2(decision_tree,width,filename):
+    '''
+    Given a decision tree and its width at each depth,
+    Plot the tree depends on its width at each depth using matplotlib
+    Finally save the picture into a jpg with the given name as filename
+        
+    Parameters:
+    - decision_tree: a dictionary containing all the tree nodes and leaves
+    - width: a list, contain the number of nodes and leaves at each depth of the tree
+    - filename: a string, the name of the file which the final image will save to, e.g. 'tree1.jpg'
+    
+    Return: None
+    '''
+    def plotNode(nodeTxt,parentPt,centerPt,nodeType):
+        # Plot a single node or leaf with array
+        plot_decision_tree_v2.ax1.annotate(nodeTxt, xy=parentPt, \
+        xycoords='axes fraction',
+        xytext=centerPt, textcoords='axes fraction',\
+        va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
+
+    def plotTree2(decision_tree,width,record,cur_depth,parentPt):
+        # A recursive function 
+        cur_num = record[cur_depth]
+        max_width=np.max(width)*0.25
+        node_num = width[cur_depth]
+        step=max_width/(node_num-1)
+        record[cur_depth]+=1
+
+        change_height=0.3
+
+        curPt=-max_width/2+step*cur_num,parentPt[1]-change_height
+        if decision_tree["leaf"]==True:
+            message='leaf:'+str(decision_tree["class"])
+            plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
+
+        else:
+            message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
+            plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
+            plotTree2(decision_tree["left"],width,record,cur_depth+1,curPt)
+            plotTree2(decision_tree["right"],width,record,cur_depth+1,curPt)
+
+    # Draw a plot depending on maximum width
+    print("Plotting decision tree v2 using width ...")
+    fig = matplot.figure(1, facecolor = 'white')
+    fig.clf()
+    plot_decision_tree_v2.ax1 = matplot.subplot(111,frameon=False,xticks=[], yticks=[])
+    message = 'X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
+    plot_decision_tree_v2.ax1.annotate(message, xy = (0,1), xytext = (0,1), va = "center", ha = "center", bbox = node)
+    max_width=np.max(np.array(width))*0.12
+    record = np.zeros((len(width),))
+    parentPt = (0,1)
+    plotTree2(decision_tree["left"], np.array(width), record, 1, parentPt)
+    plotTree2(decision_tree["right"], np.array(width), record, 1, parentPt)
+
+    matplot.savefig(filename, bbox_inches = 'tight')
+    print("Plotting completed. Plot saved to ", filename)

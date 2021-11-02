@@ -132,3 +132,4 @@ decistion_tree.png
 output.txt
 output/cross_validation_results.txt
 output/confusion_matrix.jpg
+output/decision_tree_model_v2.jpg

@@ -50,7 +50,8 @@ def calculate_evaluation_metrics(confusion_matrix):
     
     return accuracy, precision, recall, f_score
     
-def cross_validation(filepath,seed):
+    
+def cross_validation(filepath, seed):
     '''
     Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training set.
     
@@ -61,13 +62,13 @@ def cross_validation(filepath,seed):
     
     Return:
     - average_accuracy: Number of correctly classified examples divided by the total number of examples
+    - accuracy_standard_deviation: Standard deviation of average accuracy
     - average_precision: Number of correctly classified positive divided by the total number of predicted positive 
     - average_recall: Number of correctly classified positive divided by the total number of positive
     - average_f1_score: Performance measure of the classifier
     '''
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
-    #np.random.shuffle(loaded_data)
     rg = np.random.default_rng(seed)
     shuffled_order = rg.permutation(len(loaded_data))
     loaded_data = loaded_data[shuffled_order]
@@ -95,8 +96,10 @@ def cross_validation(filepath,seed):
         
     # Calculate and return cross validation results
     average_depth=np.mean(np.array(depth_list))
+    
     print("average_depth : ", average_depth)
     print("depth list : ", depth_list)
+    
     accuracy_list = []
     precision_list = []
     recall_list = []
@@ -113,10 +116,11 @@ def cross_validation(filepath,seed):
         confusion_matrix_sum += confusion_matrix_list[i]
     
     average_accuracy = np.mean(np.array(accuracy_list), axis=0)
+    accuracy_standard_deviation = np.std(np.array(accuracy_list))
     average_precision = np.mean(np.array(precision_list), axis=0)
     average_recall = np.mean(np.array(recall_list), axis=0)
     average_f1_score = np.mean(np.array(f1_score_list), axis=0)
     average_confusion_matrix = confusion_matrix_sum / 10
     
-    return average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix
+    return average_accuracy, accuracy_standard_deviation, average_precision, average_recall, average_f1_score, average_confusion_matrix
     

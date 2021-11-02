@@ -185,9 +185,10 @@ def prune_with_cross_validation(filepath, seed):
         confusion_matrix_sum += confusion_matrix_list[i]
 
     average_accuracy = np.mean(np.array(accuracy_list), axis = 0)
+    accuracy_standard_deviation = np.std(np.array(accuracy_list))
     average_precision = np.mean(np.array(precision_list), axis = 0)
     average_recall = np.mean(np.array(recall_list), axis = 0)
     average_f1_score = np.mean(np.array(f1_score_list), axis = 0)
     average_confusion_matrix = confusion_matrix_sum / len(confusion_matrix_list)
 
-    return average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix
+    return average_accuracy, accuracy_standard_deviation, average_precision, average_recall, average_f1_score, average_confusion_matrix
