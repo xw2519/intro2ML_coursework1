@@ -150,39 +150,25 @@ def prune_with_cross_validation(filepath, seed):
     pruned_depth_list=[]
     for i, test_fold in enumerate(loaded_data):
         # Remove test fold from training/validation folds
-        train_valid_folds = np.vstack(np.delete(loaded_data, i, axis = 0))
-        # Divide training/validation sets into 10 folds
-        train_valid_folds = train_valid_folds.reshape((10, -1, 8))
-
-        best_valid_tree = ({}, 0, 0)
+        train_valid_folds = np.delete(loaded_data, i, axis = 0)
 
         for j, validation_fold in enumerate(train_valid_folds):
             training_folds   = np.vstack(np.delete(train_valid_folds, j, axis = 0))
             training_dataset = training_folds[:, :7]
             training_labels  = training_folds[:, 7]
 
-            validation_dataset = validation_fold[:, :7]
-            validation_labels =  validation_fold[:, -1]
-
-            decision_tree_model, max_depth = create_decision_tree(training_dataset=training_dataset, label=training_labels, tree_depth=0)
+            decision_tree_model, max_depth = create_decision_tree(training_dataset = training_dataset, label = training_labels, tree_depth = 0)
             pruned_decision_tree_model, pruned_max_depth = prune_tree(training_folds, validation_fold, decision_tree_model)
-            # Predict using validation fold
-            pruned_predictions = predict_dataset(validation_dataset, pruned_decision_tree_model)
-            pruned_confusion_matrix = calculate_confusion_matrix(pruned_predictions, validation_labels)
-            pruned_accuracy, pruned_precision, pruned_recall, pruned_f1_score = calculate_evaluation_metrics(pruned_confusion_matrix)
 
-            # Select the best model
-            if(pruned_accuracy > best_valid_tree[1]): best_valid_tree = (pruned_decision_tree_model, pruned_accuracy,pruned_max_depth)
+            # Evaluate pruned trees on the test fold
+            confusion_matrix_list.append(calculate_confusion_matrix(predict_dataset(test_fold, pruned_decision_tree_model), test_fold[:, -1]))
+            pruned_depth_list.append(pruned_max_depth)
 
-        # Evaluate performance of the best model selected with validation fold
-        predictions = predict_dataset(test_fold, best_valid_tree[0])
-        pruned_depth_list.append(best_valid_tree[2])
-        confusion_matrix_list.append(calculate_confusion_matrix(predictions, test_fold[:, -1]))
 
     # Calculate and return cross validation results
     average_pruned_depth = np.mean(np.array(pruned_depth_list))
     print("Average_pruned_depth: ", average_pruned_depth)
-    print("Pruned_depth_list: ", pruned_depth_list)
+
     accuracy_list = []
     precision_list = []
     recall_list = []
@@ -202,6 +188,6 @@ def prune_with_cross_validation(filepath, seed):
     average_precision = np.mean(np.array(precision_list), axis = 0)
     average_recall = np.mean(np.array(recall_list), axis = 0)
     average_f1_score = np.mean(np.array(f1_score_list), axis = 0)
-    average_confusion_matrix = confusion_matrix_sum / 10
+    average_confusion_matrix = confusion_matrix_sum / len(confusion_matrix_list)
 
     return average_accuracy, average_precision, average_recall, average_f1_score, average_confusion_matrix
