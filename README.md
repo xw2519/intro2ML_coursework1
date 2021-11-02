@@ -59,6 +59,7 @@ Average Confusion Matrix:
  [ 4.4  2.7  3.6 39.1]]
 
 Average Accuracy:              0.794
+Accuracy Standard Deviation:   0.01281
 Average Precision:            [0.79712101 0.81247094 0.78128313 0.79145837]
 Average Recall:               [0.7813252  0.81110196 0.79455889 0.78364575]
 Average F1 Score:             [0.78608478 0.81014749 0.78598421 0.78480441]
