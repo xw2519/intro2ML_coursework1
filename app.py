@@ -81,6 +81,10 @@ if __name__ == "__main__":
             print_cross_validation_metrics(pruned_accuracies, pruned_accuracy_standard_deviation ,pruned_average_precision, pruned_average_recall, pruned_average_f1_score, pruned_average_confusion_matrix, True, True)
             print("----------------------------------------------------------------------------------------------------------------")
             print()
+            print("Plotting confusion matrix")
+            plot_confusion_matrix(pruned_average_confusion_matrix)
+            print("Plotting completed. Plot saved to 'output/confusion_matrix.jpg'")
+            print()
             input("To select other functions, press 'Enter'")
             
             
