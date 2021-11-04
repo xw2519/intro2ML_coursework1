@@ -278,23 +278,6 @@ def print_cross_validation_metrics(average_accuracy, accuracy_standard_deviation
 node = dict(boxstyle="round4",fc="0.8")
 arrow_args = dict(arrowstyle="<-")
 
-def plotNode(nodeTxt,parentPt,centerPt,nodeType):
-    """
-    Plot a single node or leaf with array
-    
-    Parameters:
-    - nodeTxt: 
-    - parentPt: 
-    - centerPt: 
-    - nodeType: 
-
-    Return: None
-    """
-    plot_decision_tree.ax1.annotate(nodeTxt, xy=parentPt, \
-    xycoords='axes fraction',
-    xytext=centerPt, textcoords='axes fraction',\
-    va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
-
 
 def plot_decision_tree(decision_tree,max_depth,filename):
     """
@@ -310,27 +293,58 @@ def plot_decision_tree(decision_tree,max_depth,filename):
     Return: None
     """
     def plotNode(nodeTxt,parentPt,centerPt,nodeType):
-        # plot a single node or leaf with array
+        """
+        Plot a single node or leaf with array within plot_decision_tree function
+        
+        Parameters:
+        - nodeTxt: a string, contains the message to be displayed on the block
+        - parentPt: the coordinates of where the arrow starts to point out  
+        - centerPt: the coordinates of the center of the block that the arrow points to
+        - nodeType: the display style of the node
+
+        Return: None
+        """
         plot_decision_tree.ax1.annotate(nodeTxt, xy=parentPt, \
         xycoords='axes fraction',
         xytext=centerPt, textcoords='axes fraction',\
         va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
 
     def plotTree(decision_tree,max_depth,cur_depth,parentPt,left):
-        # left = -1.0 means left branch, left = 1.0 means right branch 
-        width=0.01
+        """
+        A recursive function that loop over all the nodes to plot the tree 
+        depends on max depth of the tree
+        
+        Parameters:
+        - decision_tree: a dictionary containing all the tree nodes and leaves
+        - max_depth: the maximum depth of the decision tree
+        - cur_depth: the depth of the current node 
+        - parentPt: the coordinates of where the arrow starts
+        - left: either -1.0 or 1.0, -1.0 means left branch, 1.0 means right branch 
+
+        Return: None
+        """
+       # set the minimum seperation of each node and the height difference between each depth 
+        width=0.01 
+        change_height=0.5
         if max_depth>=6:
+            # if tree is too deep reduce the param, so at least root of the tree can be seen clearly
             param=max_depth-cur_depth-5
         else:   
             param=max_depth-cur_depth
-        change_height=0.5
+            
+        # calculate currrent node's center position
         curPt=parentPt[0]+left*width*pow(2,param)/4,parentPt[1]-change_height
+
         if decision_tree["leaf"]==True:
+            # if the current node is a leaf, print leaf and room number
             message='leaf:'+str(decision_tree["class"])
             plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
         else:
+            # if not  a leaf, print the feature number and its value 
             message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
             plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
+
+            # continue to go on left subnode then right 
             plotTree(decision_tree["left"],max_depth,cur_depth+1,curPt,-1.0)
             plotTree(decision_tree["right"],max_depth,cur_depth+1,curPt,1.0)
 
@@ -339,9 +353,13 @@ def plot_decision_tree(decision_tree,max_depth,filename):
     fig = matplot.figure(1,facecolor='white')
     fig.clf()
     plot_decision_tree.ax1 = matplot.subplot(111,frameon=False,xticks=[], yticks=[])
+
+    # get the root node message and plot it on (0,1)
     message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
     plot_decision_tree.ax1.annotate(message, xy=(0,1), xytext=(0,1), va="center", ha="center", bbox=node)
     parentPt = (0,1)
+
+    # continue to go on left subnode, then right
     plotTree(decision_tree["left"], max_depth, 1, parentPt, -1.0)
     plotTree(decision_tree["right"], max_depth, 1, parentPt, 1.0)
 
@@ -363,30 +381,59 @@ def plot_decision_tree_v2(decision_tree,width,filename):
     Return: None
     """
     def plotNode(nodeTxt,parentPt,centerPt,nodeType):
-        """Plot a single node or leaf with array"""
+        """
+        Plot a single node or leaf with array within plot_decision_tree_v2 function
+        
+        Parameters:
+        - nodeTxt: a string, contains the message to be displayed on the block
+        - parentPt: the coordinates of where the arrow starts to point out  
+        - centerPt: the coordinates of the center of the block that the arrow points to
+        - nodeType: the display style of the node
+
+        Return: None
+        """
         plot_decision_tree_v2.ax1.annotate(nodeTxt, xy=parentPt, \
         xycoords='axes fraction',
         xytext=centerPt, textcoords='axes fraction',\
         va="center",ha="center", bbox=nodeType, arrowprops=arrow_args)
 
     def plotTree2(decision_tree,width,record,cur_depth,parentPt):
-        """A recursive function""" 
+        """
+        A recursive function that loop over all the nodes to plot the tree 
+        depending on width of each depth of the tree
+        
+        Parameters:
+        - decision_tree: a dictionary containing all the tree nodes and leaves
+        - width: a list, contain the number of nodes and leaves at each depth of the tree
+        - record: a numpy array with dimension same as width, record which node we are currently plotting
+        - cur_depth: the depth of the current node 
+        - parentPt: the coordinates of where the arrow starts to point out
+
+        Return: None
+        """
+        # set the height between each depth
+        change_height=0.3
+
         cur_num = record[cur_depth]
         max_width=np.max(width)*0.25
         node_num = width[cur_depth]
         step=max_width/(node_num-1)
         record[cur_depth]+=1
 
-        change_height=0.3
-
+        # calculate currrent node's center position
         curPt=-max_width/2+step*cur_num,parentPt[1]-change_height
+
         if decision_tree["leaf"]==True:
+             # if the current node is a leaf, print leaf and room number
             message='leaf:'+str(decision_tree["class"])
             plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
 
         else:
+            # if not  a leaf, print the feature number and its value 
             message='X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
             plotNode(message,(parentPt[0],parentPt[1]-0.03),curPt,node)
+
+            # continue to go on left subnode, then right
             plotTree2(decision_tree["left"],width,record,cur_depth+1,curPt)
             plotTree2(decision_tree["right"],width,record,cur_depth+1,curPt)
 
@@ -395,11 +442,14 @@ def plot_decision_tree_v2(decision_tree,width,filename):
     fig = matplot.figure(1, facecolor = 'white')
     fig.clf()
     plot_decision_tree_v2.ax1 = matplot.subplot(111,frameon=False,xticks=[], yticks=[])
+
+    # get the root node message and plot it on (0,1)
     message = 'X'+str(decision_tree["attribute"])+'<'+str(decision_tree["value"])
     plot_decision_tree_v2.ax1.annotate(message, xy = (0,1), xytext = (0,1), va = "center", ha = "center", bbox = node)
-    max_width=np.max(np.array(width))*0.12
-    record = np.zeros((len(width),))
     parentPt = (0,1)
+    # create an array to record how many node in a particuar depth has been plotted
+    record = np.zeros((len(width),))
+    
     plotTree2(decision_tree["left"], np.array(width), record, 1, parentPt)
     plotTree2(decision_tree["right"], np.array(width), record, 1, parentPt)
 
