@@ -1,25 +1,28 @@
+"""
+pruning.py
+
+Contains all the pruning functions of the program : 
+    prune_tree(training_set, validation_set, trained_tree)
+    prune_with_cross_validation(filepath, seed)
+    
+The tree is considered pruned if a full iteration of the while loop is completed without removing any nodes.
+
+Basic logic:
+WHILE tree is not pruned:
+    FOR every node in tree:
+        IF node is connected to two leaves:
+            prune and compare accuracy
+"""
+
 from bin.decision_tree import create_decision_tree, predict_dataset
 from bin.evaluation import calculate_confusion_matrix, calculate_evaluation_metrics
 
 import numpy as np
 import collections
 
-'''
-pruning.py
-
-Contains all the punring functions of the program. The tree is considered pruned if a full iteration of the while loop is completed without removing any nodes.
-
-Basic logic:
-
-WHILE tree is not pruned:
-    FOR every node in tree:
-        IF node is connected to two leaves:
-            prune and compare accuracy
-'''
-
 def prune_tree(training_set, validation_set, trained_tree):
-    '''
-    Traverses the tree, finds any nodes that can be pruned and prunes the node before comparing the performance metrics.
+    """
+    Traverse the tree, find any nodes that can be pruned and prune the node before comparing the performance metrics.
 
     Parameters:
     - training_set: Training dataset
@@ -29,7 +32,7 @@ def prune_tree(training_set, validation_set, trained_tree):
     Return:
     - trained_tree: The new pruned tree model
     - max_depth: Max depth of the current pruned decision tree model
-    '''
+    """
     # Store current path in tree.
     # Traverses tree without recursion and finding subsets of training set. Stores recently explored nodes.
     stack = []
@@ -121,7 +124,7 @@ def prune_tree(training_set, validation_set, trained_tree):
 
 
 def prune_with_cross_validation(filepath, seed):
-    '''
+    """
     Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training/validation set.
 
     Calculates metrics for each fold to get the average metric.
@@ -132,10 +135,12 @@ def prune_with_cross_validation(filepath, seed):
 
     Return:
     - average_accuracy: Number of correctly classified examples divided by the total number of examples
+    - accuracy_standard_deviation : Standard deviation of the accuracies
     - average_precision: Number of correctly classified positive divided by the total number of predicted positive
     - average_recall: Number of correctly classified positive divided by the total number of positive
     - average_f1_score: Performance measure of the classifier
-    '''
+    - average_confusion_matrix : Average confusion matrix
+    """
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
     rg = np.random.default_rng(seed)
@@ -167,7 +172,7 @@ def prune_with_cross_validation(filepath, seed):
 
     # Calculate and return cross validation results
     average_pruned_depth = np.mean(np.array(pruned_depth_list))
-    print("Average_pruned_depth: ", average_pruned_depth)
+    print("Average depth of the pruned tree: ", average_pruned_depth)
 
     accuracy_list = []
     precision_list = []

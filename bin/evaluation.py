@@ -1,17 +1,20 @@
+"""
+evaluation.py
+    
+Contain functions that evaluate the performance of a decision tree model : 
+    calculate_confusion_matrix(predicted_labels, actual_labels)
+    calculate_evaluation_metrics(confusion_matrix)
+    cross_validation(filepath, seed)
+"""
+
 from .decision_tree import create_decision_tree, predict_dataset
 import numpy as np   
 
 np.seterr(invalid='ignore')
 
 
-'''
-evaluation.py
-    
-Contains functions that evaluates the performance of a decision tree model  
-'''
-
 def calculate_confusion_matrix(predicted_labels, actual_labels) -> np.ndarray:
-    '''
+    """
     Given arrays of 'predicted_labels' and 'actual_labels, calculate and return the confusion matrix as an 4x4 array
     
     Parameters:
@@ -20,7 +23,7 @@ def calculate_confusion_matrix(predicted_labels, actual_labels) -> np.ndarray:
     
     Return:
     - confusion_matrix: The 4x4 confusion matrix array
-    '''
+    """
     confusion_matrix = np.zeros((4, 4))
     
     for actual_value, predicted_value in zip(actual_labels, predicted_labels): 
@@ -31,7 +34,7 @@ def calculate_confusion_matrix(predicted_labels, actual_labels) -> np.ndarray:
 
 
 def calculate_evaluation_metrics(confusion_matrix):
-    '''
+    """
     Given the 'confusion_matrix' array, calculate and return evaluation metrics derived from the confusion matrix
     
     Parameters:
@@ -42,7 +45,7 @@ def calculate_evaluation_metrics(confusion_matrix):
     - precision: Number of correctly classified positive divided by the total number of predicted positive 
     - recall: Number of correctly classified positive divided by the total number of positive
     - f_score: Performance measure of the classifier
-    '''
+    """
     accuracy = np.sum(np.diagonal(confusion_matrix)) / np.sum(confusion_matrix)
     precision = np.diagonal(confusion_matrix) / np.sum(confusion_matrix, axis = 0)
     recall = np.diagonal(confusion_matrix) / np.sum(confusion_matrix, axis = 1)
@@ -52,13 +55,15 @@ def calculate_evaluation_metrics(confusion_matrix):
     
     
 def cross_validation(filepath, seed):
-    '''
-    Loads and divides the data set into 10 folds. Performs cross validation with each fold as a test set and 9 folds as training set.
+    """
+    Load and divide the data set into 10 folds. 
+    Perform cross validation with each fold as a test set and other 9 folds as training set.
     
-    Calculates metrics for each fold to get the average metric.
+    Calculate metrics for each fold to get the average metric.
     
     Parameters:
     - filepath: File path to the dataset 
+    - seed: seed used for default_rng()
     
     Return:
     - average_accuracy: Number of correctly classified examples divided by the total number of examples
@@ -66,7 +71,8 @@ def cross_validation(filepath, seed):
     - average_precision: Number of correctly classified positive divided by the total number of predicted positive 
     - average_recall: Number of correctly classified positive divided by the total number of positive
     - average_f1_score: Performance measure of the classifier
-    '''
+    - average_confusion_matrix: Confusion matrix
+    """
     # Load and shuffle the data
     loaded_data = np.loadtxt(filepath)
     rg = np.random.default_rng(seed)
@@ -97,9 +103,8 @@ def cross_validation(filepath, seed):
     # Calculate and return cross validation results
     average_depth=np.mean(np.array(depth_list))
     
-    print("average_depth : ", average_depth)
-    print("depth list : ", depth_list)
-    
+    print("Average depth of the unpruned tree: ", average_depth)
+       
     accuracy_list = []
     precision_list = []
     recall_list = []
