@@ -154,7 +154,7 @@ def plot_confusion_matrix(confusion_matrix):
     axis.set_yticklabels(label_list)
 
     for i in range(4):
-        for j in range(4): axis.text(i, j, np.round(confusion_matrix[i][j], 4), ha = "center", va = "center", color = 'black')
+        for j in range(4): axis.text(j, i, np.round(confusion_matrix[i][j], 4), ha = "center", va = "center", color = 'black')
     
     matplot.savefig('output/confusion_matrix.jpg', bbox_inches = 'tight')
 
