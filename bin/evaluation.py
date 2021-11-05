@@ -80,6 +80,11 @@ def cross_validation(filepath, seed):
     loaded_data = loaded_data[shuffled_order]
     
     # Create 10 folds
+    reduce_num = len(loaded_data)%10
+    if reduce_num != 0:
+        # if loaded data is not divisible by 10 get rid of some to make it divisible by 10
+        loaded_data = loaded_data[reduce_num:]
+
     loaded_data = loaded_data.reshape((10, -1, 8))
     
     # Perform cross validation 
