@@ -20,6 +20,7 @@ Contents
 - The program saves all plots of decision trees and confusion matrices in the [output](output) folder.
 - All evaluation metrics are saved to the the [output](output) folder.
 - Random seed is required to be specified by the user. This is done in order to allow the user to replicate a result if the random seed is known.
+- The report is contained in the docs folder. 
 
 ### Usage
 To start the interactive program, run the Python file: [app.py](app.py). 
